@@ -16,3 +16,4 @@ CREATE TABLE "ipaddr" (
 );
 
 insert into source(name) values ('test');
+insert into source(name) values ('blah');

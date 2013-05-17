@@ -1,0 +1,17 @@
+<h1>Boo Who?</h1>
+Myself is <%= $self %> <br />
+Sources is <%= $sources %>
+<table border="1">
+  <tr>
+     <th>ID</th>
+     <th>Name</th>
+  </tr>
+
+  % for my $line (@$sources) {
+    <tr>
+      <td><%= $line->id %></td>
+      <td><%= $line->name %></td>
+    </tr>
+  % }
+</table>
+

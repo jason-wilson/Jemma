@@ -8,4 +8,4 @@ BEGIN { unshift @INC, "$FindBin::Bin/../lib" }
 
 # Start command line interface for application
 require Mojolicious::Commands;
-Mojolicious::Commands->start_app('Jemma', 'daemon', '-l', 'http://172.17.17.17:3001');
+Mojolicious::Commands->start_app('Jemma', 'daemon', '-l', 'http://localhost:3001');

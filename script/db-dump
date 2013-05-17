@@ -1,0 +1,9 @@
+use lib 'lib';
+
+use Jemma::Schema;
+
+my $schema = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+print "Schema is $schema\n";
+
+my ($data) = $schema->resultset('Source')->all;
+print STDERR "  Data is $data\n";

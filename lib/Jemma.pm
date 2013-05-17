@@ -1,6 +1,5 @@
 package Jemma;
 use Mojo::Base 'Mojolicious';
-use Jemma::Schema;
 
 has schema => sub {
   return Jemma::Schema->connect('dbi:SQLite:data.sqlite');
@@ -10,22 +9,18 @@ has schema => sub {
 sub startup {
   my $self = shift;
 
+  print STDERR "Myself is $self\n";
   # Router
   my $r = $self->routes;
+  print STDERR "r is a $r\n";
+  for my $ns ($r->namespaces) {
+    print STDERR "Namespace is ", $ns, "\n";
+    for (@{$ns}) {
+      print STDERR "  Which has: ", $_, "\n";
+    }
+  }
 
-  $r->get('/source')->to(action => 'source');
-}
-
-sub source {
-  my $self = shift;
-  exit 1;
-
-  print STDERR "Myself is $self\n";
-  my ($data) = Jemma::Schema::Result::Source->all;
-  $data //= 'Broken';
-
-  $self->stash(x => $self);
-  $self->stash(self => $data);
+  $r->get('/source')->to(controller => 'source', action => 'show');
 }
 
 1;
