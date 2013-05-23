@@ -29,7 +29,7 @@ __PACKAGE__->table("ipaddr");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 begin
+=head2 start
 
   data_type: 'integer'
   is_nullable: 0
@@ -60,7 +60,7 @@ __PACKAGE__->table("ipaddr");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "begin",
+  "start",
   { data_type => "integer", is_nullable => 0 },
   "end",
   { data_type => "integer", is_nullable => 0 },
@@ -86,6 +86,21 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
+=head2 ipaddrextras
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Ipaddrextra>
+
+=cut
+
+__PACKAGE__->has_many(
+  "ipaddrextras",
+  "Jemma::Schema::Result::Ipaddrextra",
+  { "foreign.ipaddr" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 source
 
 Type: belongs_to
@@ -107,8 +122,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-16 22:33:58
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:EXTEarJSWvdlVu15P4kOMg
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-23 13:11:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:z9r/HVQWlzhK75zWmY3+ag
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

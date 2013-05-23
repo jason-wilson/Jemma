@@ -7,7 +7,7 @@ CREATE TABLE "source" (
 DROP TABLE "ipaddr";
 CREATE TABLE "ipaddr" (
   "id" INTEGER PRIMARY KEY NOT NULL,
-  "begin" INTEGER NOT NULL,
+  "start" INTEGER NOT NULL,
   "end" INTEGER NOT NULL,
   "name" TEXT NOT NULL,
   "description" TEXT,
@@ -15,5 +15,11 @@ CREATE TABLE "ipaddr" (
   FOREIGN KEY ("source") REFERENCES "source"("id")
 );
 
-insert into source(name) values ('test');
-insert into source(name) values ('blah');
+DROP TABLE "ipaddrextra";
+CREATE TABLE "ipaddrextra" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "ipaddr" INTEGER NOT NULL,
+  "key" TEXT NOT NULL,
+  "value" TEXT,
+  FOREIGN KEY ("ipaddr") REFERENCES "ipaddr"("id")
+);

@@ -1,0 +1,47 @@
+
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::McAfee;
+use Jemma::Schema;
+use Jemma::Utils;
+
+my ($x) = Jemma::Import::McAfee->new(name => 'Innerguard');
+my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+
+print "Schema is $schema\n";
+
+for my $file (@ARGV) {
+  $x->importdata(file => $file);
+}
+
+$schema->resultset('Source')->find_or_create( { name => 'Innerguard' });
+
+my $code = sub {
+  for my $ip ($x->iplist) {
+    $schema->resultset('Ipaddr')->create( {
+      start => $ip,
+      end   => $ip,
+      name  => $x->{ip}{$ip},
+      description => "Something",
+      source => { name => 'Innerguard' },
+    }), "\n";
+  }
+};
+$schema->txn_do($code);
+
+$code = sub {
+  for my $net ($x->subnetlist) {
+    my ($start, $end) = Jemma::Utils::cidr_to_range($net);
+    $schema->resultset('Ipaddr')->create( {
+      start => $start,
+      end   => $end,
+      name  => $x->{subnet}{$net},
+      description => "Something",
+      source => { name => 'Innerguard' },
+    }), "\n";
+  }
+};
+$schema->txn_do($code);
+
+#print Data::Dumper->Dump( [ $x->ip( 170852668 ) ]);

@@ -1,5 +1,6 @@
 package Jemma;
 use Mojo::Base 'Mojolicious';
+use Jemma::utils;
 
 has schema => sub {
   return Jemma::Schema->connect('dbi:SQLite:data.sqlite');
@@ -9,18 +10,13 @@ has schema => sub {
 sub startup {
   my $self = shift;
 
-  print STDERR "Myself is $self\n";
-  # Router
   my $r = $self->routes;
-  print STDERR "r is a $r\n";
-  for my $ns ($r->namespaces) {
-    print STDERR "Namespace is ", $ns, "\n";
-    for (@{$ns}) {
-      print STDERR "  Which has: ", $_, "\n";
-    }
-  }
-
   $r->get('/source')->to(controller => 'source', action => 'show');
+  $r->get('/ip')->to(controller => 'ip', action => 'show');
+  $r->get('/ip/like/:match')->to(controller => 'ip', action => 'match');
+
+  $self->helper(n2ip => sub { Jemma::Utils::number_to_ip($_[1]) } );
+  $self->helper(r2c => sub { Jemma::Utils::range_to_cidr($_[1], $_[2]) } );
 }
 
 1;
