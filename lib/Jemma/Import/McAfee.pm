@@ -80,20 +80,31 @@ sub importdata {
 	$self->{subnet}{ $cidr } = $first_v;
       }
 
+      if ($type eq 'iprange') {
+        # This is an range of address - so remember for later
+	my $range = $self->{data}{iprange}{name}{$first_v}{begin} .
+	           "-" .
+		   $self->{data}{iprange}{name}{$first_v}{end};
+	$self->{iprange}{ $range } = $first_v;
+      }
+
     }
   }
 }
 
 sub iplist {
   my ($self) = shift;
-
   return sort { $a <=> $b } keys %{$self->{ip}};
 }
 
 sub subnetlist {
   my ($self) = shift;
-
   return keys %{$self->{subnet}};
+}
+
+sub rangelist {
+  my ($self) = shift;
+  return keys %{$self->{iprange}};
 }
 
 sub ip {

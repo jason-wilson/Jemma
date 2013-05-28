@@ -13,7 +13,9 @@
     <tr>
       <td><%= n2ip($line->start) %></td>
       <td><%= n2ip($line->end) %></td>
-      <td><%= r2c($line->start, $line->end) %></td>
+      <td><%=
+        join('<br />', split(/ /, r2c($line->start, $line->end)))
+      %></td>
       <td align=right><%= $line->end - $line->start +1 %></td>
       <td><%= $line->name %></td>
       <td><%= $line->source->name %></td>

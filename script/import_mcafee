@@ -44,4 +44,18 @@ $code = sub {
 };
 $schema->txn_do($code);
 
+$code = sub {
+  for my $range ($x->rangelist) {
+    my ($start, $end) = split /-/, $range;
+    $schema->resultset('Ipaddr')->create( {
+      start => Jemma::Utils::ip_to_number($start),
+      end   => Jemma::Utils::ip_to_number($end),
+      name  => $x->{iprange}{$range},
+      description => "Something",
+      source => { name => 'Innerguard' },
+    }), "\n";
+  }
+};
+$schema->txn_do($code);
+
 #print Data::Dumper->Dump( [ $x->ip( 170852668 ) ]);
