@@ -1,0 +1,17 @@
+<h1>Groups</h1>
+<table border="1">
+  <tr>
+     <th>Name</th>
+     <th>Description</th>
+     <th>Source</th>
+  </tr>
+
+  % for my $line (@$group) {
+    <tr>
+      <td><%= $line->name %></td>
+      <td><%= $line->description %></td>
+      <td><%= $line->source->name %></td>
+    </tr>
+  % }
+</table>
+

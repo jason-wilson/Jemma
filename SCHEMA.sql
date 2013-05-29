@@ -4,8 +4,8 @@ CREATE TABLE "source" (
   "name" TEXT
 );
 
-DROP TABLE "ipaddr";
-CREATE TABLE "ipaddr" (
+DROP TABLE "ip";
+CREATE TABLE "ip" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "start" INTEGER NOT NULL,
   "end" INTEGER NOT NULL,
@@ -15,11 +15,32 @@ CREATE TABLE "ipaddr" (
   FOREIGN KEY ("source") REFERENCES "source"("id")
 );
 
-DROP TABLE "ipaddrextra";
-CREATE TABLE "ipaddrextra" (
+DROP TABLE "ipextra";
+CREATE TABLE "ipextra" (
   "id" INTEGER PRIMARY KEY NOT NULL,
-  "ipaddr" INTEGER NOT NULL,
+  "ip" INTEGER NOT NULL,
   "key" TEXT NOT NULL,
   "value" TEXT,
-  FOREIGN KEY ("ipaddr") REFERENCES "ipaddr"("id")
+  FOREIGN KEY ("ip") REFERENCES "ip"("id")
 );
+
+DROP TABLE "grp";
+CREATE TABLE "grp" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "parent" INTEGER,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "source" INTEGER,
+  FOREIGN KEY ("parent") REFERENCES "grp"("id"),
+  FOREIGN KEY ("source") REFERENCES "source"("id")
+);
+
+DROP TABLE "ipgrp";
+CREATE TABLE "ipgrp" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "ip" INTEGER NOT NULL,
+  "grp" INTEGER NOT NULL,
+  FOREIGN KEY ("ip") REFERENCES "ip"("id"),
+  FOREIGN KEY ("grp") REFERENCES "grp"("id")
+);
+

@@ -67,53 +67,39 @@ sub importdata {
 	}
       }
 
+      my ($list_type, $list_key);
       if ($type eq 'ipaddr') {
-        # This is an IP address - so remember for later
-	$self->{ip}{ Jemma::Utils::ip_to_number($self->{data}{ipaddr}{name}{$first_v}{ipaddr}) } = $first_v;
-      }
-
-      if ($type eq 'subnet') {
-        # This is an subnet address - so remember for later
-	my $cidr = $self->{data}{subnet}{name}{$first_v}{subnet} .
+	$list_type = $type;
+	$list_key = $self->{data}{ipaddr}{name}{$first_v}{ipaddr};
+      } elsif ($type eq 'subnet') {
+	$list_type = $type;
+	$list_key = $self->{data}{subnet}{name}{$first_v}{subnet} .
 	           "/" .
 		   $self->{data}{subnet}{name}{$first_v}{bits};
-	$self->{subnet}{ $cidr } = $first_v;
-      }
-
-      if ($type eq 'iprange') {
-        # This is an range of address - so remember for later
-	my $range = $self->{data}{iprange}{name}{$first_v}{begin} .
+      } elsif ($type eq 'iprange') {
+	$list_type = $type;
+	$list_key = $self->{data}{iprange}{name}{$first_v}{begin} .
 	           "-" .
 		   $self->{data}{iprange}{name}{$first_v}{end};
-	$self->{iprange}{ $range } = $first_v;
+      } elsif ($type eq 'netgroup') {
+        $list_type = 'group';
+	$list_key = $first_v;
+      }
+
+      if (defined $list_type) {
+        $self->{$list_type}{$list_key} = $first_v;
       }
 
     }
   }
 }
 
-sub iplist {
+sub list {
   my ($self) = shift;
-  return sort { $a <=> $b } keys %{$self->{ip}};
+  my ($type) = shift;
+
+  return keys %{$self->{$type}};
 }
-
-sub subnetlist {
-  my ($self) = shift;
-  return keys %{$self->{subnet}};
-}
-
-sub rangelist {
-  my ($self) = shift;
-  return keys %{$self->{iprange}};
-}
-
-sub ip {
-  my ($self) = shift;
-  my ($ip) = shift;
-
-  my $name = $self->{ip}{$ip};
-  return $self->{data}{ipaddr}{name}{$name};
-}
-
+  
 1;
  

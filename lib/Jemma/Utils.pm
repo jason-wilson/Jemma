@@ -50,10 +50,6 @@ sub range_to_cidr {
   my $from = shift;
   my $to = shift;
 
-#  if ($from == $to) {
-#    return number_to_ip($from) . "/32";
-#  }
-
   return join ' ', Net::CIDR::range2cidr(
   	number_to_ip($from) . '-' .
   	number_to_ip($to),

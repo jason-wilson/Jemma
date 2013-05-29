@@ -1,12 +1,12 @@
 use utf8;
-package Jemma::Schema::Result::Ipaddr;
+package Jemma::Schema::Result::Ip;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
 
 =head1 NAME
 
-Jemma::Schema::Result::Ipaddr
+Jemma::Schema::Result::Ip
 
 =cut
 
@@ -15,11 +15,11 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 TABLE: C<ipaddr>
+=head1 TABLE: C<ip>
 
 =cut
 
-__PACKAGE__->table("ipaddr");
+__PACKAGE__->table("ip");
 
 =head1 ACCESSORS
 
@@ -86,18 +86,33 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 ipaddrextras
+=head2 ipextras
 
 Type: has_many
 
-Related object: L<Jemma::Schema::Result::Ipaddrextra>
+Related object: L<Jemma::Schema::Result::Ipextra>
 
 =cut
 
 __PACKAGE__->has_many(
-  "ipaddrextras",
-  "Jemma::Schema::Result::Ipaddrextra",
-  { "foreign.ipaddr" => "self.id" },
+  "ipextras",
+  "Jemma::Schema::Result::Ipextra",
+  { "foreign.ip" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 ipgrps
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Ipgrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "ipgrps",
+  "Jemma::Schema::Result::Ipgrp",
+  { "foreign.ip" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
@@ -122,8 +137,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:58:19
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:MH6GoL0wZ8GQVJaE+FsYKQ
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:27:06
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jjvJ4BHmnBp9Anp2v2gt2g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

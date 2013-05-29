@@ -1,4 +1,6 @@
+#!/usr/bin/perl -w
 
+use strict;
 use lib 'lib';
 
 use Data::Dumper;
@@ -6,7 +8,8 @@ use Jemma::Import::McAfee;
 use Jemma::Schema;
 use Jemma::Utils;
 
-my ($x) = Jemma::Import::McAfee->new(name => 'Innerguard');
+my ($source) = 'Innerguard';
+my ($x) = Jemma::Import::McAfee->new(name => $source);
 my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
 
 print "Schema is $schema\n";
@@ -15,45 +18,57 @@ for my $file (@ARGV) {
   $x->importdata(file => $file);
 }
 
-$schema->resultset('Source')->find_or_create( { name => 'Innerguard' });
+$schema->resultset('Source')->find_or_create( { name => $source });
 
 my $code = sub {
-  for my $ip ($x->iplist) {
-    $schema->resultset('Ipaddr')->create( {
-      start => $ip,
-      end   => $ip,
-      name  => $x->{ip}{$ip},
-      description => "Something",
-      source => { name => 'Innerguard' },
-    }), "\n";
+  for my $ip ($x->list('ipaddr')) {
+    my $number = Jemma::Utils::ip_to_number($ip);
+    $schema->resultset('Ip')->create( {
+      start => $number,
+      end   => $number,
+      name  => $x->{ipaddr}{$ip},
+      description => $x->{data}{ipaddr}{name}{$x->{ipaddr}{$ip}}{description},
+      source => { name => $source },
+    });
   }
 };
 $schema->txn_do($code);
 
 $code = sub {
-  for my $net ($x->subnetlist) {
+  for my $net ($x->list('subnet')) {
     my ($start, $end) = Jemma::Utils::cidr_to_range($net);
-    $schema->resultset('Ipaddr')->create( {
+    $schema->resultset('Ip')->create( {
       start => $start,
       end   => $end,
       name  => $x->{subnet}{$net},
-      description => "Something",
-      source => { name => 'Innerguard' },
-    }), "\n";
+      description => $x->{data}{subnet}{name}{$x->{subnet}{$net}}{description},
+      source => { name => $source },
+    });
   }
 };
 $schema->txn_do($code);
 
 $code = sub {
-  for my $range ($x->rangelist) {
+  for my $range ($x->list('iprange')) {
     my ($start, $end) = split /-/, $range;
-    $schema->resultset('Ipaddr')->create( {
+    $schema->resultset('Ip')->create( {
       start => Jemma::Utils::ip_to_number($start),
       end   => Jemma::Utils::ip_to_number($end),
       name  => $x->{iprange}{$range},
-      description => "Something",
-      source => { name => 'Innerguard' },
-    }), "\n";
+      description => $x->{data}{iprange}{name}{$x->{iprange}{$range}}{description},
+      source => { name => $source },
+    });
+  }
+};
+$schema->txn_do($code);
+
+$code = sub {
+  for my $group ($x->list('group')) {
+    $schema->resultset('Grp')->create( {
+      name  => $group,
+      description => $x->{data}{netgroup}{name}{$group}{description},
+      source => { name => $source },
+    });
   }
 };
 $schema->txn_do($code);

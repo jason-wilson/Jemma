@@ -6,6 +6,7 @@
      <th>CIDR</th>
      <th>Size</th>
      <th>Name</th>
+     <th>Description</th>
      <th>Source</th>
   </tr>
 
@@ -20,6 +21,7 @@
       </td>
       <td align=right><%= $line->end - $line->start +1 %></td>
       <td><%= $line->name %></td>
+      <td><%= $line->description %></td>
       <td><%= $line->source->name %></td>
     </tr>
   % }

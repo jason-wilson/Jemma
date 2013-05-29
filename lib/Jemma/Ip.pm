@@ -8,7 +8,7 @@ sub show {
   my $schema = Jemma->schema;
 
   my @ip;
-  for my $line ($schema->resultset('Ipaddr')->search(
+  for my $line ($schema->resultset('Ip')->search(
     { },
     {
       prefetch => 'source',
@@ -30,7 +30,7 @@ sub match {
   my $schema = Jemma->schema;
 
   my @ip;
-  for my $line ($schema->resultset('Ipaddr')->search(
+  for my $line ($schema->resultset('Ip')->search(
     {
       'me.name' => { like => "%$expr%" }
     },
