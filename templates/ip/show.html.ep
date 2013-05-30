@@ -1,5 +1,4 @@
-<h1>IP list</h1>
-<link rel="stylesheet" type="text/css" href="/css/table.css">
+% layout 'jemma', title => 'IP list';
 
 <table border="1">
   <tr>

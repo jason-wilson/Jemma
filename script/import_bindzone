@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::Bindzone;
+use Jemma::Schema;
+use Jemma::Utils;
+
+for my $file (@ARGV) {
+  my ($source) = 'bindzone-' . $file;
+  my ($x) = Jemma::Import::Bindzone->new(name => $source);
+  my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+
+  $x->importdata($file);
+
+  $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
+
+  my $code = sub {
+    for my $name (keys %{$x->{data}}) {
+
+      my $number = Jemma::Utils::ip_to_number($x->{data}{$name}{ip});
+      $schema->resultset('Ip')->create( {
+	start => $number,
+	end   => $number,
+	name  => $name,
+	description => $x->{data}{$name}{type},
+	source => $source,
+      });
+    }
+  };
+  $schema->txn_do($code);
+}
+

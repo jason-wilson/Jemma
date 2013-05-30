@@ -1,62 +1,34 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="/css/layout.css">
-    <link rel="stylesheet" type="text/css" href="/css/table.css">
-  </head>
+% layout 'jemma', title => 'Group: '. $name;
 
-  <body>
-    <div class="container">
-    <div class="header">
-      <h1>Group: <%= $name %></h1>
-    </div>
+<table border="1">
+  <tr>
+     <th>Source</th>
+     <th>Member</th>
+     <th>Data</th>
+  </tr>
 
-    <div class="menu">
-      <%= link_to "IP list" => '/ip' %>
-    </div>
+  % my $cnt = 0;
+  % for my $line (@$parent) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->child->source->name %> </td>
+      <td><%= link_to $line->parent->name => '/group/name/' . $line->parent->name %> </td>
+      <td>Member of</td>
+    </tr>
+  % }
 
-    <div class="content">
+  % for my $line (@$ip) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->ip->source->name %> </td>
+      <td><%= link_to $line->ip->name => '/ip/name/' . $line->ip->name %> </td>
+      <td><%= r2c($line->ip->start, $line->ip->end) %> </td>
+    </tr>
+  % }
+  % for my $line (@$child) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->parent->source->name %> </td>
+      <td><%= link_to $line->child->name => '/group/name/' . $line->child->name %> </td>
+      <td>Sub-group</td>
+    </tr>
+  % }
 
-      <table border="1">
-	<tr>
-	   <th>Source</th>
-	   <th>Member</th>
-	   <th>Data</th>
-	</tr>
-
-	% my $cnt = 0;
-	% for my $line (@$parent) {
-	  <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
-	    <td><%= $line->child->source->name %> </td>
-	    <td><%= link_to $line->parent->name => '/group/name/' . $line->parent->name %> </td>
-	    <td>Member of</td>
-	  </tr>
-	% }
-
-	% for my $line (@$ip) {
-	  <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
-	    <td><%= $line->ip->source->name %> </td>
-	    <td><%= link_to $line->ip->name => '/ip/name/' . $line->ip->name %> </td>
-	    <td><%= r2c($line->ip->start, $line->ip->end) %> </td>
-	  </tr>
-	% }
-	% for my $line (@$child) {
-	  <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
-	    <td><%= $line->parent->source->name %> </td>
-	    <td><%= link_to $line->child->name => '/group/name/' . $line->child->name %> </td>
-	    <td>Sub-group</td>
-	  </tr>
-	% }
-
-      </table>
-
-    </div>
-
-    <div class="footer">
-      This is the footer
-    </div>
-
-    </div>
-
-  </body>
-</html>
+</table>

@@ -1,4 +1,5 @@
-<h1>IP addresses</h1>
+% layout 'jemma', title => 'IP: '. $match;
+
 <table border="1">
   <tr>
      <th>Start</th>

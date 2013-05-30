@@ -1,6 +1,5 @@
-<h1>Boo Who?</h1>
-Myself is <%= $self %> <br />
-Sources is <%= $sources %>
+% layout 'jemma', title => 'Sources';
+
 <table border="1">
   <tr>
      <th>ID</th>

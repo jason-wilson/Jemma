@@ -12,6 +12,12 @@
 	<h1><%= $title %></h1>
       </div>
 
+      <div class="menu">
+        <%= link_to "Sources"    => '/source' %> <br />
+        <%= link_to "IP list"    => '/ip'     %> <br />
+        <%= link_to "Group list" => '/group'  %> <br />
+      </div>
+
       <div class="content">
 	<%= content %>
       </div>
