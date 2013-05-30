@@ -27,11 +27,9 @@ CREATE TABLE "ipextra" (
 DROP TABLE "grp";
 CREATE TABLE "grp" (
   "id" INTEGER PRIMARY KEY NOT NULL,
-  "parent" INTEGER,
   "name" TEXT NOT NULL,
   "description" TEXT,
   "source" INTEGER,
-  FOREIGN KEY ("parent") REFERENCES "grp"("id"),
   FOREIGN KEY ("source") REFERENCES "source"("id")
 );
 
@@ -42,5 +40,14 @@ CREATE TABLE "ipgrp" (
   "grp" INTEGER NOT NULL,
   FOREIGN KEY ("ip") REFERENCES "ip"("id"),
   FOREIGN KEY ("grp") REFERENCES "grp"("id")
+);
+
+DROP TABLE "grpgrp";
+CREATE TABLE "grpgrp" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "parent" INTEGER NOT NULL,
+  "child" INTEGER NOT NULL,
+  FOREIGN KEY ("parent") REFERENCES "grp"("id"),
+  FOREIGN KEY ("child") REFERENCES "grp"("id")
 );
 

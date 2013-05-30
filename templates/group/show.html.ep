@@ -8,7 +8,7 @@
 
   % for my $line (@$group) {
     <tr>
-      <td><%= $line->name %></td>
+      <td><%= link_to $line->name => '/group/name/' . $line->name %> </td>
       <td><%= $line->description %></td>
       <td><%= $line->source->name %></td>
     </tr>

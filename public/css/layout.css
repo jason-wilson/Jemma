@@ -1,0 +1,22 @@
+div.container
+{
+  width:100%;
+  border:1px solid gray;
+}
+div.header,div.footer
+{
+  padding:0.5em;
+  color:white;
+  background-color:gray;
+}
+div.menu
+{
+  float:left;
+  background-color:lightblue;
+  padding:0.5em;
+}
+div.content
+{
+  margin-left:100px
+  background-color:green;
+}

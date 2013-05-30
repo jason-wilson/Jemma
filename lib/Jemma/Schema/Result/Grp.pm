@@ -29,12 +29,6 @@ __PACKAGE__->table("grp");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 parent
-
-  data_type: 'integer'
-  is_foreign_key: 1
-  is_nullable: 1
-
 =head2 name
 
   data_type: 'text'
@@ -56,8 +50,6 @@ __PACKAGE__->table("grp");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "parent",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "name",
   { data_type => "text", is_nullable => 0 },
   "description",
@@ -80,17 +72,32 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 grps
+=head2 grpgrp_children
 
 Type: has_many
 
-Related object: L<Jemma::Schema::Result::Grp>
+Related object: L<Jemma::Schema::Result::Grpgrp>
 
 =cut
 
 __PACKAGE__->has_many(
-  "grps",
-  "Jemma::Schema::Result::Grp",
+  "grpgrp_children",
+  "Jemma::Schema::Result::Grpgrp",
+  { "foreign.child" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 grpgrp_parents
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Grpgrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "grpgrp_parents",
+  "Jemma::Schema::Result::Grpgrp",
   { "foreign.parent" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -108,26 +115,6 @@ __PACKAGE__->has_many(
   "Jemma::Schema::Result::Ipgrp",
   { "foreign.grp" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
-);
-
-=head2 parent
-
-Type: belongs_to
-
-Related object: L<Jemma::Schema::Result::Grp>
-
-=cut
-
-__PACKAGE__->belongs_to(
-  "parent",
-  "Jemma::Schema::Result::Grp",
-  { id => "parent" },
-  {
-    is_deferrable => 0,
-    join_type     => "LEFT",
-    on_delete     => "NO ACTION",
-    on_update     => "NO ACTION",
-  },
 );
 
 =head2 source
@@ -151,8 +138,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:58:19
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1ZzPcRTcny1FnTIP6Hb5mQ
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-30 13:40:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:fhDY153J49Vv36PP4psuVQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
