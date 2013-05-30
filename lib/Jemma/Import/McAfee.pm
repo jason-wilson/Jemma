@@ -67,6 +67,7 @@ sub importdata {
 	}
       }
 
+      # Currently assumes all ipaddr are unique - not the case...
       my ($list_type, $list_key);
       if ($type eq 'ipaddr') {
 	$list_type = $type;
