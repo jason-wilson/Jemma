@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::Hosts;
+use Jemma::Schema;
+use Jemma::Utils;
+
+my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+
+my $code = sub {
+  for my $file (@ARGV) {
+    my ($source) = 'hosts-' . $file;
+    my ($x) = Jemma::Import::Hosts->new(name => $source);
+
+    $x->importdata(
+      $schema,
+      $source,
+      $file,
+    );
+  }
+};
+$schema->txn_do($code);
+
+__DATA__
+
+  $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
+
+  my $code = sub {
+    for my $name (keys %{$x->{data}}) {
+
+      my $number = Jemma::Utils::ip_to_number($x->{data}{$name}{ip});
+      $schema->resultset('Ip')->create( {
+	start => $number,
+	end   => $number,
+	name  => $name,
+	description => "From hosts file",
+	source => $source,
+      });
+    }
+  };
+  $schema->txn_do($code);
+}
+

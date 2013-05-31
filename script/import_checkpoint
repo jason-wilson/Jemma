@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::Checkpoint;
+use Jemma::Schema;
+
+my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+
+my $code = sub {
+  for my $file (@ARGV) {
+    my ($source) = 'checkpoint';
+    my ($x) = Jemma::Import::Checkpoint->new(name => $source);
+
+    print "Importing $file\n";
+
+    $x->importdata(
+      $schema,
+      $source,
+      $file,
+    );
+  }
+};
+$schema->txn_do($code);

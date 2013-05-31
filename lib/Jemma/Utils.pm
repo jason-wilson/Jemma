@@ -12,6 +12,7 @@ sub ip_to_number {
   if (! defined $cache{$ip}) {
     if ( $ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)/ ) {
       $cache{$ip} = ($1 * 256 * 256 *256) + ($2 *256 *256) + ($3 * 256) + $4;
+      $cache{ $cache{$ip} } = $ip;
     } else {
       return 0;
     }
@@ -32,6 +33,7 @@ sub number_to_ip {
     $number -= $c * 256;
 
     $cache{$number} = "$a.$b.$c.$number";
+    $cache{ $cache{$number} } = $number;
   }
 
   return $cache{$number};

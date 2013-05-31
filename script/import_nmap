@@ -8,13 +8,15 @@ use Jemma::Import::Nmap;
 use Jemma::Schema;
 use Jemma::Utils;
 
-my ($source) = 'nmap-172.17.17.0/24';
+my ($source) = 'nmap';
 my ($x) = Jemma::Import::Nmap->new(name => $source);
 my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
 
-$x->importdata('172.17.17.0/24');
-
 $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
+
+for my $subnet (@ARGV) {
+  $x->importdata($subnet);
+}
 
 my $code = sub {
   for my $ip (keys %{$x->{data}}) {
@@ -30,4 +32,3 @@ my $code = sub {
   }
 };
 $schema->txn_do($code);
-
