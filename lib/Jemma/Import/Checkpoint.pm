@@ -44,7 +44,7 @@ sub importdata {
 	my (@key) = @d[2 .. $#d];
 	my $host = shift @key;
 	if ($#key >= 0 and $val =~ /./) {
-	  #print join('|', @d), "\n";
+	  #print join('|', @d), "=$val\n";
 	  #print "$host: key is ", join('-', @key), " and value is ", $val, "\n";
 	  my $key = join '-', @key;
 
@@ -95,7 +95,7 @@ sub importdata {
 	  description => $data{$host}{comments},
 	  source      => $source,
 	});
-	$data{$host}{id} = $id->id;
+	$data{$host}{_id} = $id->id;
       } else {
 	my $number = Jemma::Utils::ip_to_number($data{$host}{ipaddr});
 	my $id = $schema->resultset('Ip')->create( {
@@ -105,8 +105,20 @@ sub importdata {
 	  description => $data{$host}{comments},
 	  source      => $source,
 	});
-	$data{$host}{id} = $id->id;
+	$data{$host}{_id} = $id->id;
       }
+    } elsif (exists $data{$host}{ipaddr_first}) {
+      my ($start) = Jemma::Utils::ip_to_number($data{$host}{ipaddr_first});
+      my ($end)   = Jemma::Utils::ip_to_number($data{$host}{ipaddr_last});
+
+      my $id = $schema->resultset('Ip')->create( {
+	start       => $start,
+	end         => $end,
+	name        => $host,
+	description => $data{$host}{comments},
+	source      => $source,
+      });
+      $data{$host}{_id} = $id->id;
     }
   }
 
@@ -118,16 +130,29 @@ sub importdata {
 	description => $data{$group}{comments},
 	source      => $source,
       });
-      $data{$group}{id} = $gid->id;
+      $data{$group}{_id} = $gid->id;
     }
   }
 
   # Now load members of groups
   for my $group (sort keys %data) {
     if (exists $data{$group}{type} and $data{$group}{type} eq 'group') {
-      print "Group is $group\n";
-      for my $id (keys %{$data{$group}{ReferenceObject}}) {
-        print "  id=$id and name is ", $data{$group}{ReferenceObject}{$id}{Name}, "\n";
+      for my $i (sort { $a <=> $b } keys %{$data{$group}{ReferenceObject}}) {
+	my $name = $data{$group}{ReferenceObject}{$i}{Name};
+	my $id = $data{$group}{_id};
+
+	if ($data{$name}{type} eq 'group') {
+	  # Sub-group
+	  $schema->resultset('Grpgrp')->create( {
+	    parent => $id,
+	    child  => $data{$name}{_id},
+	  });
+	} else {
+	  $schema->resultset('Ipgrp')->create( {
+	    ip  => $data{$name}{_id},
+	    grp => $id,
+	  });
+	}
       }
     }
   }
@@ -135,26 +160,3 @@ sub importdata {
 }
 
 1;
-
-__DATA__
-
-    if (/^([\d\.]+)\s+(.*)/) {
-      my $addr = $1;
-      my $names = $2;
-
-      for (split /\s+/, $names) {
-	my $number = Jemma::Utils::ip_to_number($addr);
-	$schema->resultset('Ip')->create( {
-	  start       => $number,
-	  end         => $number,
-	  name        => $_,
-	  description => 'From hosts file',
-	  source      => $source,
-	});
-      }
-    }
-  }
-}
-
-1;
-

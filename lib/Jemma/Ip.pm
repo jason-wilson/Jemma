@@ -76,4 +76,26 @@ sub name {
 
 }
 
+sub search {
+  my $self = shift;
+  my $ip = $self->param('ip');
+  
+  my $number = Jemma::Utils::ip_to_number($ip);
+  print STDERR "Got $ip and gives us $number\n";
+
+  my $schema = Jemma->schema;
+
+  $self->stash(ip => [
+    $schema->resultset('Ip')->search(
+      {
+	'start' => {'<=', $number},
+	'end' => {'>=', $number},
+      },
+      {
+	prefetch => 'source',
+	order_by => 'start',
+      }
+    )]);
+}
+
 1;
