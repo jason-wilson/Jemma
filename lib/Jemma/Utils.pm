@@ -23,17 +23,20 @@ sub ip_to_number {
 
 sub number_to_ip {
   my $number = shift;
+  my $tmp = $number;
 
-  if (! defined $cache{$number}) {
-    my $a = int($number / (256*256*256));
-    $number -= $a * 256 * 256 *256;
-    my $b = int($number / (256*256));
-    $number -= $b * 256 *256;
-    my $c = int($number / 256);
-    $number -= $c * 256;
+  if (! defined $cache{$tmp}) {
+    my $a = int($tmp / (256*256*256));
+    $tmp -= $a * 256 * 256 *256;
+    my $b = int($tmp / (256*256));
+    $tmp -= $b * 256 *256;
+    my $c = int($tmp / 256);
+    $tmp -= $c * 256;
 
-    $cache{$number} = "$a.$b.$c.$number";
-    $cache{ $cache{$number} } = $number;
+    my $ip = "$a.$b.$c.$tmp";
+
+    $cache{$number} = $ip;
+    $cache{ $ip } = $number;
   }
 
   return $cache{$number};

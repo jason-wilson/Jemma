@@ -80,22 +80,38 @@ sub search {
   my $self = shift;
   my $ip = $self->param('ip');
   
-  my $number = Jemma::Utils::ip_to_number($ip);
-  print STDERR "Got $ip and gives us $number\n";
-
   my $schema = Jemma->schema;
 
-  $self->stash(ip => [
-    $schema->resultset('Ip')->search(
-      {
-	'start' => {'<=', $number},
-	'end' => {'>=', $number},
-      },
-      {
-	prefetch => 'source',
-	order_by => 'start',
-      }
-    )]);
+  if ($ip =~ /^[\d\.]+$/) {
+    my $number = Jemma::Utils::ip_to_number($ip);
+    print STDERR "Got $ip and gives us $number\n";
+
+    $self->stash(ip => [
+      $schema->resultset('Ip')->search(
+	{
+	  'start' => {'<=', $number},
+	  'end'   => {'>=', $number},
+	},
+	{
+	  prefetch => 'source',
+	  order_by => 'start',
+	}
+      )]);
+  } elsif ($ip =~ /^[\d\.]+\/\d+$/) {
+    my ($start, $end) = Jemma::Utils::cidr_to_range($ip);
+
+    $self->stash(ip => [
+      $schema->resultset('Ip')->search(
+	{
+	  'start' => {'>=', $start},
+	  'end'   => {'<=', $end},
+	},
+	{
+	  prefetch => 'source',
+	  order_by => 'start',
+	}
+      )]);
+  }
 }
 
 1;
