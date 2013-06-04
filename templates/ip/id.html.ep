@@ -1,0 +1,32 @@
+% layout 'jemma', title => 'IP details for ' . $ip->name . ' from ' . $ip->source->name;
+
+<table border="1">
+  <tr>
+     <th>Key</th>
+     <th>Value</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$extra) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->key %></td>
+      <td><%= $line->value %></td>
+    </tr>
+  % }
+
+</table>
+
+<h2>Membership groups</h2>
+
+<table border="1">
+  <tr>
+     <th>Group</th>
+  </tr>
+
+  % for my $line (@$group) {
+    <tr>
+      <td><%= link_to $line->grp->name => '/group/name/' . $line->grp->name %> </td>
+    </tr>
+  % }
+</table>
+

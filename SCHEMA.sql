@@ -51,3 +51,23 @@ CREATE TABLE "grpgrp" (
   FOREIGN KEY ("child") REFERENCES "grp"("id")
 );
 
+DROP TABLE "service";
+CREATE TABLE "service" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "name"        TEXT NOT NULL,
+  "protocol"    TEXT NOT NULL,
+  "ports"       TEXT,
+  "description" TEXT,
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("source") REFERENCES "source"("id")
+);
+
+DROP TABLE "servicegrp";
+CREATE TABLE "servicegrp" (
+  "id"       INTEGER PRIMARY KEY NOT NULL,
+  "name"     TEXT NOT NULL,
+  "parent"   INTEGER NOT NULL,
+  "child"    INTEGER NOT NULL,
+  FOREIGN KEY ("parent") REFERENCES "service"("id"),
+  FOREIGN KEY ("child")  REFERENCES "service"("id")
+);

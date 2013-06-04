@@ -1,0 +1,18 @@
+% layout 'jemma', title => 'Groups';
+
+<table border="1">
+  <tr>
+     <th>Name</th>
+     <th>Description</th>
+     <th>Source</th>
+  </tr>
+
+  % for my $line (@$group) {
+    <tr>
+      <td><%= link_to $line->name => '/group/name/' . $line->name %> </td>
+      <td><%= $line->description %></td>
+      <td><%= $line->source->name %></td>
+    </tr>
+  % }
+</table>
+

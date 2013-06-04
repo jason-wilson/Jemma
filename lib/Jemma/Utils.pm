@@ -8,6 +8,7 @@ my %cache;
 
 sub ip_to_number {
   my $ip = shift;
+  return unless defined $ip;
 
   if (! defined $cache{$ip}) {
     if ( $ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)/ ) {

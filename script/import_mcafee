@@ -12,6 +12,13 @@ my ($source) = 'Innerguard';
 my ($x) = Jemma::Import::McAfee->new(name => $source);
 my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
 
+my $code = sub {
+  $x->importdata($schema, $source, @ARGV);
+};
+$schema->txn_do($code);
+
+
+__DATA__
 for my $file (@ARGV) {
   $x->importdata(file => $file);
 }

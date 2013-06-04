@@ -72,21 +72,6 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 ipaddrs
-
-Type: has_many
-
-Related object: L<Jemma::Schema::Result::Ipaddr>
-
-=cut
-
-__PACKAGE__->has_many(
-  "ipaddrs",
-  "Jemma::Schema::Result::Ipaddr",
-  { "foreign.source" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
-
 =head2 ips
 
 Type: has_many
@@ -102,9 +87,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 services
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:58:19
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RTAeFN5L/9xbST2Qk7IxyQ
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Service>
+
+=cut
+
+__PACKAGE__->has_many(
+  "services",
+  "Jemma::Schema::Result::Service",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-04 13:30:14
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:I5xiF2bsA65pEgpZLgT4Cg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

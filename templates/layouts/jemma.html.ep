@@ -15,12 +15,19 @@
       <div class="menu">
         <%= link_to "Sources"    => '/source' %> <br />
         <%= link_to "IP list"    => '/ip'     %> <br />
+        <%= link_to "Service list" => '/service'     %> <br />
         <%= link_to "Group list" => '/group'  %> <br />
 	<hr />
+
 	<%= form_for '/ip/search' => (method => 'post') => begin %>
 	  IP: <%= text_field 'ip' %>
 	  <%= submit_button 'Search' %>
-	<% end %>
+	<% end %><br />
+	<%= form_for '/group/search' => (method => 'post') => begin %>
+	  Group: <%= text_field 'group' %>
+	  <%= submit_button 'Search' %>
+	<% end %><br />
+
       </div>
 
       <div class="content">

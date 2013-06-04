@@ -111,7 +111,68 @@ sub search {
 	  order_by => 'start',
 	}
       )]);
+
+  } elsif ($ip =~ /[_%]/) {
+    # Has 'like' type expressions
+
+    $self->stash(ip => [
+      $schema->resultset('Ip')->search(
+	{
+	  '-or' => {
+	    'me.name' => {'like', $ip},
+	    'me.description' => {'like', $ip},
+	  }
+	},
+	{
+	  prefetch => 'source',
+	  order_by => 'start',
+	}
+      )]);
+  } else {
+    # Assume it is a name to look for
+
+    $self->stash(ip => [
+      $schema->resultset('Ip')->search(
+	{
+	  'LOWER(me.name)' => lc($ip),
+	},
+	{
+	  prefetch => 'source',
+	  order_by => 'start',
+	}
+      )]);
   }
+}
+
+sub id {
+  my $self = shift;
+  my $id = $self->param('id');
+  
+  my $schema = Jemma->schema;
+
+  $self->stash(ip => $schema->resultset('Ip')->search( { id => $id } ));
+
+  $self->stash(extra => [
+    $schema->resultset('Ipextra')->search(
+      {
+	ip => $id,
+      },
+      {
+	order_by => 'key',
+      }
+    )]);
+
+  $self->stash(group => [
+    $schema->resultset('Ipgrp')->search(
+    {
+      'ip' => $id,
+    },
+    {
+      prefetch => 'ip',
+      order_by => 'ip.name',
+    }
+  )]);
+
 }
 
 1;

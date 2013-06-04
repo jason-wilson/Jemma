@@ -69,4 +69,34 @@ sub name {
 
 }
 
+sub search {
+  my $self = shift;
+  my $schema = Jemma->schema;
+  my $group = $self->param('group');
+
+  if ($group =~ /[_%]/) {
+    $self->stash(group => [
+      $schema->resultset('Grp')->search(
+      {
+        'me.name' => {'like', $group},
+      },
+      {
+	prefetch => 'source',
+	order_by => 'me.name',
+      },
+    )]);
+  } else {
+    $self->stash(group => [
+      $schema->resultset('Grp')->search(
+      {
+        'LOWER(me.name)' => lc($group),
+      },
+      {
+	prefetch => 'source',
+	order_by => 'me.name',
+      },
+    )]);
+  }
+}
+
 1;
