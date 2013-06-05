@@ -1,0 +1,5 @@
+<% for my $line (@$ip) {
+<% foreach my $l (split(/ /, r2c($line->start, $line->end))) { =%>
+<%= $l %> <%= $line->name %>
+<% } =%>
+% }
