@@ -71,3 +71,45 @@ CREATE TABLE "servicegrp" (
   FOREIGN KEY ("parent") REFERENCES "service"("id"),
   FOREIGN KEY ("child")  REFERENCES "service"("id")
 );
+
+DROP TABLE "objectset";
+CREATE TABLE "objectset" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "name"	TEXT NOT NULL,
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("source") REFERENCES "source"("id")
+);
+
+
+DROP TABLE "objectsetlist";
+CREATE TABLE "objectsetlist" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "object"	INTEGER,
+  "type"        TEXT NOT NULL,
+  "ip"          INTEGER,
+  "grp"         INTEGER,
+  "service"     INTEGER,
+  "servicegrp"  INTEGER,
+  FOREIGN KEY ("object")     REFERENCES "object"("id"),
+  FOREIGN KEY ("ip")         REFERENCES "ip"("id"),
+  FOREIGN KEY ("grp")        REFERENCES "grp"("id"),
+  FOREIGN KEY ("service")    REFERENCES "service"("id"),
+  FOREIGN KEY ("servicegrp") REFERENCES "servicegrp"("id")
+};
+
+DROP TABLE "fwrule";
+CREATE TABLE "fwrule" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "number"	INTEGER NOT NULL,
+  "name"        TEXT NOT NULL,
+  "action"      TEXT NOT NULL,
+  "service"     INTEGER,
+  "source"	INTEGER,
+  "destination"	INTEGER,
+  "description" TEXT,
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("service")     REFERENCES "objectset"("id")
+  FOREIGN KEY ("source")      REFERENCES "objectset"("id")
+  FOREIGN KEY ("destination") REFERENCES "objectset"("id")
+  FOREIGN KEY ("source")      REFERENCES "source"("id")
+);

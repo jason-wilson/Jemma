@@ -59,6 +59,7 @@ sub importdata {
 	  } else {
 	    # Store others into hash
 	    $data{$type}{$first_v}{$1} = $2;
+	    print "$type $first_v has $1=$2\n";
 	  }
 	}
 
