@@ -13,6 +13,8 @@ sub startup {
   $self->stash(ipaddr => 'boo');
 
   my $r = $self->routes;
+  $r->get('/')                ->to(controller => 'source', action => 'show' );
+
   $r->get('/source')          ->to(controller => 'source', action => 'show' );
   $r->get('/ip')              ->to(controller => 'ip',     action => 'show' );
   $r->get('/ip/id/:id')       ->to(controller => 'ip',     action => 'id'   );
@@ -20,8 +22,11 @@ sub startup {
   $r->get('/ip/name/*name')   ->to(controller => 'ip',     action => 'name' );
   $r->get('/group')           ->to(controller => 'group',  action => 'show' );
   $r->get('/group/name/*name')->to(controller => 'group',  action => 'name' );
+  $r->get('/grp/name/*name')  ->to(controller => 'group',  action => 'name' );
 
   $r->get('/service')         ->to(controller => 'service', action => 'show' );
+
+  $r->get('/fwrule')          ->to(controller => 'fwrule', action => 'show' );
 
   $r->post('/ip/search')      ->to(controller => 'ip',     action => 'search' );
   $r->post('/group/search')   ->to(controller => 'group',  action => 'search' );

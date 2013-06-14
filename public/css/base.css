@@ -1,22 +1,24 @@
-div.container
+div.header
 {
-  width:100%;
-  border:1px solid gray;
-}
-div.header,div.footer
-{
-  padding:0.5em;
+  font-size: 1.5em;
   color:white;
   background-color:gray;
+  position: fixed;
+  top: 0px;
+  width:100%;
 }
 div.menu
 {
-  float:left;
+  font-size: 0.8em;
+  position:fixed;
+  width:170px;
+  height:95%;
+  top: 30px;
   background-color:lightblue;
-  padding:0.5em;
+  border:2px solid black;
 }
 div.content
 {
-  margin-left:100px
-  background-color:green;
+  margin-top:30px;
+  margin-left:180px;
 }

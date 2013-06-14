@@ -19,6 +19,11 @@ sub importdata {
 
   $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
 
+  # Create special objectsets first - will be used in multiple policy rules
+  my $all_v4 = $schema->resultset('Objectset')->create( {
+    name => "all:v4", source => $source })->id;
+  my $fwrule_number = 1;
+
   my %data;
 
   for my $file (@_) {
@@ -32,8 +37,13 @@ sub importdata {
 	my ($type) = $1;
 	my ($data) = $2;
 
+
 	# Will assume that first key=value pair uniquely defines this object
-	# within this type - need to confirm this is right
+	# NOTE: policy is of form: policy add table=TYPE name='BLAH'
+	#   Re-arrnage with some regex..
+	if ($type eq 'policy' and $data =~ /^(table=\w+) (.*)/) {
+	  $data = "$2 $1";
+	}
 	my ($first_k, $first_v);
 
 	# Loop until line is fully processed
@@ -59,7 +69,7 @@ sub importdata {
 	  } else {
 	    # Store others into hash
 	    $data{$type}{$first_v}{$1} = $2;
-	    print "$type $first_v has $1=$2\n";
+	    #print "$type $first_v has $1=$2\n";
 	  }
 	}
 
@@ -132,6 +142,64 @@ sub importdata {
 	  });
 	  $data{$type}{$first_v}{_id} = $id->id;
 
+	} elsif ($type eq 'policy') {
+	  if ($data{$type}{$first_v}{table} eq 'rule') {
+	    my $pos = $data{$type}{$first_v}{pos};
+	    print "$pos: $first_v\n";
+
+	    my $src_id = $schema->resultset('Objectset')->create( {
+	      name => "src: $first_v", source => $source })->id;
+	    my $dst_id = $schema->resultset('Objectset')->create( {
+	      name => "dst: $first_v", source => $source })->id;
+	    my $svc_id = $schema->resultset('Objectset')->create( {
+	      name => "svc: $first_v", source => $source })->id;
+
+	    for my $src (split /,/, $data{$type}{$first_v}{source}) {
+	      print "  src: $src\n";
+	      next if $src eq 'all:v4' or $src eq '*';
+
+	      my ($obj_type, $obj_name) = split /:/, $src;
+	      my $db_type = 'ip' if ($obj_type eq 'ipaddr' or $obj_type eq 'subnet' or $obj_type eq 'iprange' or $obj_type eq 'host');
+	      $db_type = 'grp' if $obj_type eq 'netgroup';
+
+	      $schema->resultset('Objectsetlist')->create( {
+		objectset => $src_id,
+		type      => $db_type,
+		$db_type => $data{$obj_type}{$obj_name}{_id},
+	      });
+
+	    }
+
+	    for my $dst (split /,/, $data{$type}{$first_v}{dest}) {
+	      print "  dst: $dst\n";
+
+	      next if $dst eq 'all:v4' or $dst eq '*';
+
+	      my ($obj_type, $obj_name) = split /:/, $dst;
+	      my $db_type = 'ip' if ($obj_type eq 'ipaddr' or $obj_type eq 'subnet' or $obj_type eq 'iprange' or $obj_type eq 'host');
+	      $db_type = 'grp' if $obj_type eq 'netgroup';
+
+	      $schema->resultset('Objectsetlist')->create( {
+		objectset => $dst_id,
+		type      => $db_type,
+		$db_type  => $data{$obj_type}{$obj_name}{_id},
+	      });
+
+	    }
+
+	    $schema->resultset('Fwrule')->create( {
+	      number      => $fwrule_number++,
+	      name        => $first_v,
+	      action      => $data{$type}{$first_v}{action},
+	      sourceset   => $src_id,
+	      destination => $dst_id,
+	      source      => $source,
+	    });
+
+
+	  } else {
+	    print "----- Got a $first_v: ", $data{$type}{$first_v}{table}, "\n";
+	  }
 	} else {
 	  warn "Not loading type of $type: $first_v\n";
 	}

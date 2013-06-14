@@ -88,6 +88,21 @@ __PACKAGE__->belongs_to(
   { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 
+=head2 objectsetlists
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Objectsetlist>
+
+=cut
+
+__PACKAGE__->has_many(
+  "objectsetlists",
+  "Jemma::Schema::Result::Objectsetlist",
+  { "foreign.servicegrp" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 parent
 
 Type: belongs_to
@@ -104,8 +119,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-04 13:23:31
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:WeB2ui32EtS2r+R8A1BTew
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:irHnLGmHqYwOIu/3Msyfkw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

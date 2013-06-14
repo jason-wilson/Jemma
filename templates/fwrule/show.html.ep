@@ -1,0 +1,29 @@
+% layout 'jemma', title => 'Firewall rule list';
+
+<table border="1">
+  <tr>
+     <th>Name</th>
+     <th>Action</th>
+     <th>Source</th>
+     <th>Destination</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$fwrule) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->name %></td>
+      <td><%= $line->action %></td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->sourceset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->sourceset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->destination->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->destination->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+    </tr>
+  % }
+</table>
+

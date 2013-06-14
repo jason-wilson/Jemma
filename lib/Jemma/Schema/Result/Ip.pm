@@ -116,6 +116,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 objectsetlists
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Objectsetlist>
+
+=cut
+
+__PACKAGE__->has_many(
+  "objectsetlists",
+  "Jemma::Schema::Result::Objectsetlist",
+  { "foreign.ip" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 source
 
 Type: belongs_to
@@ -137,8 +152,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:27:06
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jjvJ4BHmnBp9Anp2v2gt2g
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nFj4t+LQighx+AIdKHI5lg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

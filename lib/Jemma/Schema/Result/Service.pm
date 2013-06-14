@@ -86,6 +86,21 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
+=head2 objectsetlists
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Objectsetlist>
+
+=cut
+
+__PACKAGE__->has_many(
+  "objectsetlists",
+  "Jemma::Schema::Result::Objectsetlist",
+  { "foreign.service" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 servicegrp_children
 
 Type: has_many
@@ -132,8 +147,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-04 13:50:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yWgNqLzQ7yf0GXGWOXlLEA
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DesqlYpCJZ4KaQlP6hOtEg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

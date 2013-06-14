@@ -1,16 +1,23 @@
 % layout 'jemma', title => 'Sources';
 
+<%= @$ips[0] %>
+
 <table border="1">
   <tr>
      <th>ID</th>
      <th>Name</th>
+     <th>IP Objects</th>
+     <th>Group Objects</th>
   </tr>
 
   % for my $line (@$sources) {
     <tr>
-      <td><%= $line->id %></td>
+      <td align=right><%= $line->id %></td>
       <td><%= $line->name %></td>
+      <td align=right><%= @$ips[$line->id] %></td>
+      <td align=right><%= @$groups[$line->id] %></td>
     </tr>
   % }
+
 </table>
 

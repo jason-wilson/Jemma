@@ -7,12 +7,38 @@ sub show {
 
   my $schema = Jemma->schema;
 
-  my @sources;
-  for my $line ($schema->resultset('Source')->all) {
-    push @sources, $line;
-  }
+  $self->stash(sources => [
+    $schema->resultset('Source')->all ]);
 
-  $self->stash(sources => \@sources);
+  my @ips;
+  for my $ip ($schema->resultset('Ip')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    $ips[$ip->source->id] = $ip->get_column('howmany');
+  }
+  $self->stash(ips => \@ips );
+
+  my @groups;
+  for my $grp ($schema->resultset('Grp')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    print "grp is $grp\n";
+    $groups[$grp->source->id] = $grp->get_column('howmany');
+  }
+  $self->stash(groups => \@groups );
+
 }
 
 1;

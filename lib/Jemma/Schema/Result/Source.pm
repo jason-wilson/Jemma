@@ -34,6 +34,11 @@ __PACKAGE__->table("source");
   data_type: 'text'
   is_nullable: 1
 
+=head2 loaded
+
+  data_type: 'datetime'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -41,6 +46,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "name",
   { data_type => "text", is_nullable => 1 },
+  "loaded",
+  { data_type => "datetime", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -56,6 +63,21 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
+
+=head2 fwrules
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Fwrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "fwrules",
+  "Jemma::Schema::Result::Fwrule",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
 
 =head2 grps
 
@@ -87,6 +109,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 objectsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Objectset>
+
+=cut
+
+__PACKAGE__->has_many(
+  "objectsets",
+  "Jemma::Schema::Result::Objectset",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 services
 
 Type: has_many
@@ -103,8 +140,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-04 13:30:14
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:I5xiF2bsA65pEgpZLgT4Cg
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:aeImdbpapoEQm9n9Usa1gA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

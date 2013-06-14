@@ -1,7 +1,8 @@
 DROP TABLE "source";
 CREATE TABLE "source" (
   "id" INTEGER PRIMARY KEY NOT NULL,
-  "name" TEXT
+  "name" TEXT,
+  "loaded" DATETIME
 );
 
 DROP TABLE "ip";
@@ -84,18 +85,18 @@ CREATE TABLE "objectset" (
 DROP TABLE "objectsetlist";
 CREATE TABLE "objectsetlist" (
   "id"          INTEGER PRIMARY KEY NOT NULL,
-  "object"	INTEGER,
+  "objectset"	INTEGER,
   "type"        TEXT NOT NULL,
   "ip"          INTEGER,
   "grp"         INTEGER,
   "service"     INTEGER,
   "servicegrp"  INTEGER,
-  FOREIGN KEY ("object")     REFERENCES "object"("id"),
+  FOREIGN KEY ("objectset")  REFERENCES "objectset"("id"),
   FOREIGN KEY ("ip")         REFERENCES "ip"("id"),
   FOREIGN KEY ("grp")        REFERENCES "grp"("id"),
   FOREIGN KEY ("service")    REFERENCES "service"("id"),
   FOREIGN KEY ("servicegrp") REFERENCES "servicegrp"("id")
-};
+);
 
 DROP TABLE "fwrule";
 CREATE TABLE "fwrule" (
@@ -104,12 +105,12 @@ CREATE TABLE "fwrule" (
   "name"        TEXT NOT NULL,
   "action"      TEXT NOT NULL,
   "service"     INTEGER,
-  "source"	INTEGER,
+  "sourceset"	INTEGER,
   "destination"	INTEGER,
   "description" TEXT,
   "source"      INTEGER NOT NULL,
   FOREIGN KEY ("service")     REFERENCES "objectset"("id")
-  FOREIGN KEY ("source")      REFERENCES "objectset"("id")
+  FOREIGN KEY ("sourceset")   REFERENCES "objectset"("id")
   FOREIGN KEY ("destination") REFERENCES "objectset"("id")
   FOREIGN KEY ("source")      REFERENCES "source"("id")
 );

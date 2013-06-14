@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <div class="header">
-	<h1><%= $title %></h1>
+	<%= $title %>
       </div>
 
       <div class="menu">
@@ -17,6 +17,7 @@
         <%= link_to "IP list"    => '/ip'     %> <br />
         <%= link_to "Service list" => '/service'     %> <br />
         <%= link_to "Group list" => '/group'  %> <br />
+        <%= link_to "FW Rules" => '/fwrule'  %> <br />
 	<hr />
 
 	<%= form_for '/ip/search' => (method => 'post') => begin %>
@@ -28,15 +29,14 @@
 	  <%= submit_button 'Search' %>
 	<% end %><br />
 
+	<hr />
+        <%= link_to "Import data" => '/import'  %> <br />
+
       </div>
 
       <div class="content">
 	<%= content %>
       </div>
 
-      <div class="footer">
-	This is the footer
-      </div>
-    </div>
   </body>
 </html>
