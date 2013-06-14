@@ -65,10 +65,11 @@ CREATE TABLE "service" (
 
 DROP TABLE "servicegrp";
 CREATE TABLE "servicegrp" (
-  "id"       INTEGER PRIMARY KEY NOT NULL,
-  "name"     TEXT NOT NULL,
-  "parent"   INTEGER NOT NULL,
-  "child"    INTEGER NOT NULL,
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "name"        TEXT NOT NULL,
+  "description" TEXT,
+  "parent"      INTEGER NOT NULL,
+  "child"       INTEGER NOT NULL,
   FOREIGN KEY ("parent") REFERENCES "service"("id"),
   FOREIGN KEY ("child")  REFERENCES "service"("id")
 );

@@ -20,8 +20,8 @@ sub importdata {
   $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
 
   # Create special objectsets first - will be used in multiple policy rules
-  my $all_v4 = $schema->resultset('Objectset')->create( {
-    name => "all:v4", source => $source })->id;
+  my $any = $schema->resultset('Objectset')->create( {
+    name => "any", source => $source })->id;
   my $fwrule_number = 1;
 
   my %data;
@@ -142,10 +142,19 @@ sub importdata {
 	  });
 	  $data{$type}{$first_v}{_id} = $id->id;
 
+	} elsif ($type eq 'appgroup') {
+	  my $members = $data{$type}{$first_v}{members};
+
+	  print "Doing $first_v\n";
+	  for my $object (split /,/, $members) {
+	    my ($obj_type, $obj_name) = split /:/, $object;
+	    print "  Want to add $obj_type of $obj_name\n";
+	  }
+
 	} elsif ($type eq 'policy') {
 	  if ($data{$type}{$first_v}{table} eq 'rule') {
 	    my $pos = $data{$type}{$first_v}{pos};
-	    print "$pos: $first_v\n";
+	    #print "$pos: $first_v\n";
 
 	    my $src_id = $schema->resultset('Objectset')->create( {
 	      name => "src: $first_v", source => $source })->id;
@@ -155,34 +164,35 @@ sub importdata {
 	      name => "svc: $first_v", source => $source })->id;
 
 	    for my $src (split /,/, $data{$type}{$first_v}{source}) {
-	      print "  src: $src\n";
-	      next if $src eq 'all:v4' or $src eq '*';
+	      #print "  src: $src\n";
 
 	      my ($obj_type, $obj_name) = split /:/, $src;
 	      my $db_type = 'ip' if ($obj_type eq 'ipaddr' or $obj_type eq 'subnet' or $obj_type eq 'iprange' or $obj_type eq 'host');
 	      $db_type = 'grp' if $obj_type eq 'netgroup';
+	      $db_type = 'any' if $obj_type eq 'all' or $obj_type eq '*';
 
+	      my (@link) = ($db_type, $data{$obj_type}{$obj_name}{_id}) if $db_type ne 'any';
 	      $schema->resultset('Objectsetlist')->create( {
 		objectset => $src_id,
 		type      => $db_type,
-		$db_type => $data{$obj_type}{$obj_name}{_id},
+		@link,
 	      });
 
 	    }
 
 	    for my $dst (split /,/, $data{$type}{$first_v}{dest}) {
-	      print "  dst: $dst\n";
-
-	      next if $dst eq 'all:v4' or $dst eq '*';
+	      #print "  dst: $dst\n";
 
 	      my ($obj_type, $obj_name) = split /:/, $dst;
 	      my $db_type = 'ip' if ($obj_type eq 'ipaddr' or $obj_type eq 'subnet' or $obj_type eq 'iprange' or $obj_type eq 'host');
 	      $db_type = 'grp' if $obj_type eq 'netgroup';
+	      $db_type = 'any' if $obj_type eq 'all' or $obj_type eq '*';
 
+	      my (@link) = ($db_type, $data{$obj_type}{$obj_name}{_id}) if $db_type ne 'any';
 	      $schema->resultset('Objectsetlist')->create( {
 		objectset => $dst_id,
 		type      => $db_type,
-		$db_type  => $data{$obj_type}{$obj_name}{_id},
+		@link,
 	      });
 
 	    }
@@ -194,6 +204,7 @@ sub importdata {
 	      sourceset   => $src_id,
 	      destination => $dst_id,
 	      source      => $source,
+	      description => $data{$type}{$first_v}{description},
 	    });
 
 

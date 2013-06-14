@@ -2,7 +2,9 @@
 
 <table border="1">
   <tr>
+     <th>#</th>
      <th>Name</th>
+     <th>Description</th>
      <th>Action</th>
      <th>Source</th>
      <th>Destination</th>
@@ -11,7 +13,9 @@
   % my $cnt = 0;
   % for my $line (@$fwrule) {
     <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->number %></td>
       <td><%= $line->name %></td>
+      <td><%= $line->description %></td>
       <td><%= $line->action %></td>
       <td>
 	<% foreach my $obj (keys %{$objs->{$line->sourceset->id}}) {

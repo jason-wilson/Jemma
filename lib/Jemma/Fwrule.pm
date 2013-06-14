@@ -8,23 +8,30 @@ sub show {
   my $schema = Jemma->schema;
 
   $self->stash(fwrule => [
-    $schema->resultset('Fwrule')->all ]);
+    $schema->resultset('Fwrule')->search( {},
+      {
+        prefetch => [ 'sourceset', 'destination' ],
+	order_by => 'number',
+      }
+      )]);
 
   my %objs;
   for my $obj ($schema->resultset('Objectsetlist')->search(
       {
       },
       {
-        prefetch => 'objectset',
+        prefetch => [ 'objectset', 'ip', 'grp' ],
       }
     )) {
     my $type = $obj->type;
+    die "Has no type\n" unless defined $type;
 
-    if (defined $type and defined $obj->$type ) {
-      $objs{$obj->objectset->id}{$obj->$type->name} = $type;
+    if ($type eq 'any') {
+      $objs{$obj->objectset->id}{'any'} = 'ip';
     } else {
-      warn "Can't load $obj->id\n";
+      $objs{$obj->objectset->id}{$obj->$type->name} = $type;
     }
+
   }
   $self->stash(objs => \%objs);
 
