@@ -17,6 +17,7 @@ sub importdata {
   my ($source) = shift;
   my ($file) = shift;
 
+  $schema->resultset('Source')->search( { name => $source } )->delete_all;
   $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
 
   open my $fh, '<', $file;

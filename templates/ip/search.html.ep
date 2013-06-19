@@ -21,7 +21,7 @@
 	  <%= $l %><br />
 	<% } %>
       </td>
-      <td align=right><%= $line->end - $line->start +1 %></td>
+      <td align=right><%= commify($line->end - $line->start +1) %></td>
       <td><%= link_to $line->name => '/ip/name/' . $line->name %></td>
       <td><%= $line->description %></td>
       <td><%= $line->source->name %></td>

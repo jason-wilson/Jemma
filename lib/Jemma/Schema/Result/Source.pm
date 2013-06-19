@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<source>
 
 =cut
@@ -36,7 +48,8 @@ __PACKAGE__->table("source");
 
 =head2 loaded
 
-  data_type: 'datetime'
+  data_type: 'date'
+  default_value: DATETIME('now', 'localtime')
   is_nullable: 1
 
 =cut
@@ -47,7 +60,11 @@ __PACKAGE__->add_columns(
   "name",
   { data_type => "text", is_nullable => 1 },
   "loaded",
-  { data_type => "datetime", is_nullable => 1 },
+  {
+    data_type     => "date",
+    default_value => \"DATETIME('now', 'localtime')",
+    is_nullable   => 1,
+  },
 );
 
 =head1 PRIMARY KEY
@@ -124,6 +141,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 servicegrps
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Servicegrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "servicegrps",
+  "Jemma::Schema::Result::Servicegrp",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 services
 
 Type: has_many
@@ -140,8 +172,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:aeImdbpapoEQm9n9Usa1gA
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:17:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ry+NVaKQyYNTdHpEdaTQPg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

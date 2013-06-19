@@ -1,12 +1,12 @@
 use utf8;
-package Jemma::Schema::Result::Ipgrp;
+package Jemma::Schema::Result::Servicegrpgrp;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
 
 =head1 NAME
 
-Jemma::Schema::Result::Ipgrp
+Jemma::Schema::Result::Servicegrpgrp
 
 =cut
 
@@ -27,11 +27,11 @@ use base 'DBIx::Class::Core';
 
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
-=head1 TABLE: C<ipgrp>
+=head1 TABLE: C<servicegrpgrp>
 
 =cut
 
-__PACKAGE__->table("ipgrp");
+__PACKAGE__->table("servicegrpgrp");
 
 =head1 ACCESSORS
 
@@ -41,13 +41,13 @@ __PACKAGE__->table("ipgrp");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 ip
+=head2 servicegrp
 
   data_type: 'integer'
   is_foreign_key: 1
   is_nullable: 0
 
-=head2 grp
+=head2 service
 
   data_type: 'integer'
   is_foreign_key: 1
@@ -58,9 +58,9 @@ __PACKAGE__->table("ipgrp");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "ip",
+  "servicegrp",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
-  "grp",
+  "service",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
 );
 
@@ -78,39 +78,39 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 grp
+=head2 service
 
 Type: belongs_to
 
-Related object: L<Jemma::Schema::Result::Grp>
+Related object: L<Jemma::Schema::Result::Service>
 
 =cut
 
 __PACKAGE__->belongs_to(
-  "grp",
-  "Jemma::Schema::Result::Grp",
-  { id => "grp" },
+  "service",
+  "Jemma::Schema::Result::Service",
+  { id => "service" },
   { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
-=head2 ip
+=head2 servicegrp
 
 Type: belongs_to
 
-Related object: L<Jemma::Schema::Result::Ip>
+Related object: L<Jemma::Schema::Result::Servicegrp>
 
 =cut
 
 __PACKAGE__->belongs_to(
-  "ip",
-  "Jemma::Schema::Result::Ip",
-  { id => "ip" },
+  "servicegrp",
+  "Jemma::Schema::Result::Servicegrp",
+  { id => "servicegrp" },
   { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:17:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:aJzEGn5CKokhUElfJz55Mw
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:32:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:p0ms0mo8+2zdY/tO3knmeA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

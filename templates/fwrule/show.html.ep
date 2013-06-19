@@ -8,6 +8,7 @@
      <th>Action</th>
      <th>Source</th>
      <th>Destination</th>
+     <th>Service</th>
   </tr>
 
   % my $cnt = 0;
@@ -25,6 +26,11 @@
       <td>
 	<% foreach my $obj (keys %{$objs->{$line->destination->id}}) {
 	  <%= link_to $obj => "/" . $objs->{$line->destination->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->service->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->service->id}{$obj} . "/name/" . $obj %><br />
 	<% } %>
       </td>
     </tr>

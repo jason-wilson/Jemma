@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<service>
 
 =cut
@@ -101,33 +113,18 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 servicegrp_children
+=head2 servicegrpgrps
 
 Type: has_many
 
-Related object: L<Jemma::Schema::Result::Servicegrp>
+Related object: L<Jemma::Schema::Result::Servicegrpgrp>
 
 =cut
 
 __PACKAGE__->has_many(
-  "servicegrp_children",
-  "Jemma::Schema::Result::Servicegrp",
-  { "foreign.child" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
-);
-
-=head2 servicegrp_parents
-
-Type: has_many
-
-Related object: L<Jemma::Schema::Result::Servicegrp>
-
-=cut
-
-__PACKAGE__->has_many(
-  "servicegrp_parents",
-  "Jemma::Schema::Result::Servicegrp",
-  { "foreign.parent" => "self.id" },
+  "servicegrpgrps",
+  "Jemma::Schema::Result::Servicegrpgrp",
+  { "foreign.service" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
@@ -143,12 +140,12 @@ __PACKAGE__->belongs_to(
   "source",
   "Jemma::Schema::Result::Source",
   { id => "source" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DesqlYpCJZ4KaQlP6hOtEg
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:32:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:i+4pHOL5DB5hNSvnETFECA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

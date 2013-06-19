@@ -34,10 +34,37 @@ sub show {
 	order_by => 'source',
       },
     )) {
-    print "grp is $grp\n";
     $groups[$grp->source->id] = $grp->get_column('howmany');
   }
   $self->stash(groups => \@groups );
+
+  my @services;
+  for my $svc ($schema->resultset('Service')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    $services[$svc->source->id] = $svc->get_column('howmany');
+  }
+  $self->stash(services => \@services );
+
+  my @fwrules;
+  for my $fw ($schema->resultset('Fwrule')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    $fwrules[$fw->source->id] = $fw->get_column('howmany');
+  }
+  $self->stash(fwrules => \@fwrules );
 
 }
 

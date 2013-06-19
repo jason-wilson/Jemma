@@ -17,6 +17,7 @@ sub importdata {
   my ($schema) = shift;
   my ($source) = shift;
 
+  $schema->resultset('Source')->search( { name => $source } )->delete_all;
   $source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
 
   # Create special objectsets first - will be used in multiple policy rules
@@ -33,7 +34,7 @@ sub importdata {
       s/[\n\r]+//;
 
       # Process all lines that start with the object type and the word 'add'
-      if (/^(\w+) add (.*)/ ) {
+      if (/^(\w+) add (.*)/ or /^(application) modify (.*)/ ) {
 	my ($type) = $1;
 	my ($data) = $2;
 
@@ -146,9 +147,36 @@ sub importdata {
 	  my $members = $data{$type}{$first_v}{members};
 
 	  print "Doing $first_v\n";
+	  my $svcgrp = $schema->resultset('Servicegrp')->create( {
+	    name        => $first_v,
+	    description => $data{$type}{$first_v}{description},
+	    source      => $source,
+	  })->id;
+	  $data{appgroup}{$first_v}{_id} = $svcgrp;
+
 	  for my $object (split /,/, $members) {
 	    my ($obj_type, $obj_name) = split /:/, $object;
-	    print "  Want to add $obj_type of $obj_name\n";
+	    $obj_type = 'application' if $obj_type eq 'custom';
+
+	    if (! exists $data{$obj_type}{$obj_name}) {
+	      my $protocol = 'unknown';
+	      $protocol = 'icmp' if $obj_name eq 'ICMP';
+
+	      my $id = $schema->resultset('Service')->create( {
+		name        => $obj_name,
+		description => 'Auto-created',
+		protocol    => $protocol,
+		source      => $source,
+	      });
+	      $data{$obj_type}{$obj_name}{_id} = $id->id;
+	      print "  Have added $obj_type of $obj_name\n";
+	    }
+
+	    $schema->resultset('Servicegrpgrp')->create( {
+	      servicegrp => $svcgrp,
+	      service    => $data{$obj_type}{$obj_name}{_id},
+	    });
+
 	  }
 
 	} elsif ($type eq 'policy') {
@@ -197,12 +225,44 @@ sub importdata {
 
 	    }
 
+	    for my $svc (split /,/, $data{$type}{$first_v}{application}) {
+
+	      my ($obj_type, $obj_name) = split /:/, $svc;
+	      $obj_type = 'application' if $obj_type eq 'custom';
+	      my $db_type = 'service' if $obj_type eq 'application';
+	      $db_type = 'servicegrp' if $obj_type eq 'appgroup';
+	      die "Don't know what type $obj_type is\n" unless defined $db_type;
+
+
+	      if (! exists $data{$obj_type}{$obj_name}) {
+		my $protocol = 'unknown';
+		$protocol = 'icmp' if $obj_name eq 'ICMP';
+
+		my $id = $schema->resultset('Service')->create( {
+		  name        => $obj_name,
+		  description => 'Auto-created',
+		  protocol    => $protocol,
+		  source      => $source,
+		});
+		$data{$obj_type}{$obj_name}{_id} = $id->id;
+		print "  Have added $obj_type of $obj_name\n";
+	      }
+
+	      $schema->resultset('Objectsetlist')->create( {
+		objectset => $svc_id,
+		type      => $db_type,
+		$db_type  => $data{$obj_type}{$obj_name}{_id},
+	      });
+
+	    }
+
 	    $schema->resultset('Fwrule')->create( {
 	      number      => $fwrule_number++,
 	      name        => $first_v,
 	      action      => $data{$type}{$first_v}{action},
 	      sourceset   => $src_id,
 	      destination => $dst_id,
+	      service     => $svc_id,
 	      source      => $source,
 	      description => $data{$type}{$first_v}{description},
 	    });

@@ -62,4 +62,10 @@ sub range_to_cidr {
       );
 }
 
+sub commify {
+  local $_  = shift;
+  1 while s/^([-+]?\d+)(\d{3})/$1,$2/;
+  return $_;
+}
+
 1;

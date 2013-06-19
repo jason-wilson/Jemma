@@ -7,107 +7,13 @@ use Data::Dumper;
 use Jemma::Import::McAfee;
 use Jemma::Schema;
 use Jemma::Utils;
+use Jemma;
 
 my ($source) = 'Innerguard';
 my ($x) = Jemma::Import::McAfee->new(name => $source);
-my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+my ($schema) = Jemma->schema;
 
 my $code = sub {
   $x->importdata($schema, $source, @ARGV);
-};
-$schema->txn_do($code);
-
-
-__DATA__
-for my $file (@ARGV) {
-  $x->importdata(file => $file);
-}
-
-$source = $schema->resultset('Source')->find_or_create( { name => $source })->id;
-
-my $code = sub {
-  for my $name (keys %{$x->{data}{ipaddr}{name}}) {
-
-    my $number = Jemma::Utils::ip_to_number(
-      $x->{data}{ipaddr}{name}{$name}{ipaddr});
-    $schema->resultset('Ip')->create( {
-      start => $number,
-      end   => $number,
-      name  => $name,
-      description => $x->{data}{ipaddr}{name}{$name}{description},
-      source => $source,
-    });
-  }
-};
-$schema->txn_do($code);
-
-$code = sub {
-  for my $name (keys %{$x->{data}{subnet}{name}}) {
-    my $subnet = $x->{data}{subnet}{name}{$name}{subnet} . "/" .
-                 $x->{data}{subnet}{name}{$name}{bits};
-    my ($start, $end) = Jemma::Utils::cidr_to_range($subnet);
-    $schema->resultset('Ip')->create( {
-      start => $start,
-      end   => $end,
-      name  => $name,
-      description => $x->{data}{subnet}{name}{$name}{description},
-      source => $source,
-    });
-  }
-};
-$schema->txn_do($code);
-
-$code = sub {
-  for my $name (keys %{$x->{data}{iprange}{name}}) {
-    my ($start) = $x->{data}{iprange}{name}{$name}{begin};
-    my ($end) = $x->{data}{iprange}{name}{$name}{end};
-    $schema->resultset('Ip')->create( {
-      start => Jemma::Utils::ip_to_number($start),
-      end   => Jemma::Utils::ip_to_number($end),
-      name  => $name,
-      description => $x->{data}{iprange}{name}{$name}{description},
-      source => $source,
-    });
-  }
-};
-$schema->txn_do($code);
-
-# Load all the groups first
-$code = sub {
-  for my $group ($x->list('group')) {
-    my $group_row = $schema->resultset('Grp')->create( {
-      name  => $group,
-      description => $x->{data}{netgroup}{name}{$group}{description},
-      source => $source,
-    });
-
-    $x->{data}{netgroup}{name}{$group}{id} = $group_row->id;
-  }
-};
-$schema->txn_do($code);
-
-# Now link the groups to appropriate objects
-$code = sub {
-  for my $group ($x->list('group')) {
-    my ($members) = $x->{data}{netgroup}{name}{$group}{members};
-    for my $type_member(split /,/, $members) {
-      my ($type, $member) = split /:/, $type_member;
-
-      if ($type eq 'ipaddr' or $type eq 'subnet' or $type eq 'iprange') {
-	$schema->resultset('Ipgrp')->create( {
-	  ip  => { name => $member, source => $source },
-	  grp => { name => $group , source => $source },
-	});
-      } elsif ($type eq 'netgroup') {
-
-	$schema->resultset('Grpgrp')->create( {
-	  parent => $x->{data}{netgroup}{name}{$group}{id},
-	  child  => $x->{data}{netgroup}{name}{$member}{id},
-	});
-      } else {
-        warn "Don't know how to add type of $type\n";
-      }
-    }
-  }
 };
 $schema->txn_do($code);

@@ -1,8 +1,10 @@
+PRAGMA foreign_keys = ON;
+
 DROP TABLE "source";
 CREATE TABLE "source" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "name" TEXT,
-  "loaded" DATETIME
+  "loaded" DATE DEFAULT (DATETIME('now', 'localtime'))
 );
 
 DROP TABLE "ip";
@@ -13,7 +15,7 @@ CREATE TABLE "ip" (
   "name" TEXT NOT NULL,
   "description" TEXT,
   "source" INTEGER,
-  FOREIGN KEY ("source") REFERENCES "source"("id")
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "ipextra";
@@ -22,7 +24,7 @@ CREATE TABLE "ipextra" (
   "ip" INTEGER NOT NULL,
   "key" TEXT NOT NULL,
   "value" TEXT,
-  FOREIGN KEY ("ip") REFERENCES "ip"("id")
+  FOREIGN KEY ("ip") REFERENCES "ip"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "grp";
@@ -31,7 +33,7 @@ CREATE TABLE "grp" (
   "name" TEXT NOT NULL,
   "description" TEXT,
   "source" INTEGER,
-  FOREIGN KEY ("source") REFERENCES "source"("id")
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "ipgrp";
@@ -39,8 +41,8 @@ CREATE TABLE "ipgrp" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "ip" INTEGER NOT NULL,
   "grp" INTEGER NOT NULL,
-  FOREIGN KEY ("ip") REFERENCES "ip"("id"),
-  FOREIGN KEY ("grp") REFERENCES "grp"("id")
+  FOREIGN KEY ("ip") REFERENCES "ip"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("grp") REFERENCES "grp"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "grpgrp";
@@ -48,8 +50,8 @@ CREATE TABLE "grpgrp" (
   "id" INTEGER PRIMARY KEY NOT NULL,
   "parent" INTEGER NOT NULL,
   "child" INTEGER NOT NULL,
-  FOREIGN KEY ("parent") REFERENCES "grp"("id"),
-  FOREIGN KEY ("child") REFERENCES "grp"("id")
+  FOREIGN KEY ("parent") REFERENCES "grp"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("child") REFERENCES "grp"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "service";
@@ -60,7 +62,7 @@ CREATE TABLE "service" (
   "ports"       TEXT,
   "description" TEXT,
   "source"      INTEGER NOT NULL,
-  FOREIGN KEY ("source") REFERENCES "source"("id")
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "servicegrp";
@@ -68,10 +70,17 @@ CREATE TABLE "servicegrp" (
   "id"          INTEGER PRIMARY KEY NOT NULL,
   "name"        TEXT NOT NULL,
   "description" TEXT,
-  "parent"      INTEGER NOT NULL,
-  "child"       INTEGER NOT NULL,
-  FOREIGN KEY ("parent") REFERENCES "service"("id"),
-  FOREIGN KEY ("child")  REFERENCES "service"("id")
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
+);
+
+DROP TABLE "servicegrpgrp";
+CREATE TABLE "servicegrpgrp" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "servicegrp"  INTEGER NOT NULL,
+  "service"     INTEGER NOT NULL,
+  FOREIGN KEY ("servicegrp") REFERENCES "servicegrp"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("service")  REFERENCES "service"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "objectset";
@@ -79,7 +88,7 @@ CREATE TABLE "objectset" (
   "id"          INTEGER PRIMARY KEY NOT NULL,
   "name"	TEXT NOT NULL,
   "source"      INTEGER NOT NULL,
-  FOREIGN KEY ("source") REFERENCES "source"("id")
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
 );
 
 
@@ -92,11 +101,11 @@ CREATE TABLE "objectsetlist" (
   "grp"         INTEGER,
   "service"     INTEGER,
   "servicegrp"  INTEGER,
-  FOREIGN KEY ("objectset")  REFERENCES "objectset"("id"),
-  FOREIGN KEY ("ip")         REFERENCES "ip"("id"),
-  FOREIGN KEY ("grp")        REFERENCES "grp"("id"),
-  FOREIGN KEY ("service")    REFERENCES "service"("id"),
-  FOREIGN KEY ("servicegrp") REFERENCES "servicegrp"("id")
+  FOREIGN KEY ("objectset")  REFERENCES "objectset"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("ip")         REFERENCES "ip"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("grp")        REFERENCES "grp"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("service")    REFERENCES "service"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("servicegrp") REFERENCES "servicegrp"("id") ON DELETE CASCADE
 );
 
 DROP TABLE "fwrule";
@@ -110,8 +119,8 @@ CREATE TABLE "fwrule" (
   "destination"	INTEGER,
   "description" TEXT,
   "source"      INTEGER NOT NULL,
-  FOREIGN KEY ("service")     REFERENCES "objectset"("id")
-  FOREIGN KEY ("sourceset")   REFERENCES "objectset"("id")
-  FOREIGN KEY ("destination") REFERENCES "objectset"("id")
-  FOREIGN KEY ("source")      REFERENCES "source"("id")
+  FOREIGN KEY ("service")     REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("sourceset")   REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("destination") REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("source")      REFERENCES "source"("id") ON DELETE CASCADE
 );

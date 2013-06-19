@@ -10,7 +10,7 @@ sub show {
   $self->stash(fwrule => [
     $schema->resultset('Fwrule')->search( {},
       {
-        prefetch => [ 'sourceset', 'destination' ],
+        prefetch => [ 'sourceset', 'destination', 'service' ],
 	order_by => 'number',
       }
       )]);
@@ -20,7 +20,7 @@ sub show {
       {
       },
       {
-        prefetch => [ 'objectset', 'ip', 'grp' ],
+        prefetch => [ 'objectset', 'ip', 'grp', 'service', 'servicegrp' ],
       }
     )) {
     my $type = $obj->type;

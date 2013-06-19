@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<servicegrp>
 
 =cut
@@ -34,13 +46,12 @@ __PACKAGE__->table("servicegrp");
   data_type: 'text'
   is_nullable: 0
 
-=head2 parent
+=head2 description
 
-  data_type: 'integer'
-  is_foreign_key: 1
-  is_nullable: 0
+  data_type: 'text'
+  is_nullable: 1
 
-=head2 child
+=head2 source
 
   data_type: 'integer'
   is_foreign_key: 1
@@ -53,9 +64,9 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "name",
   { data_type => "text", is_nullable => 0 },
-  "parent",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
-  "child",
+  "description",
+  { data_type => "text", is_nullable => 1 },
+  "source",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
 );
 
@@ -73,21 +84,6 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 child
-
-Type: belongs_to
-
-Related object: L<Jemma::Schema::Result::Service>
-
-=cut
-
-__PACKAGE__->belongs_to(
-  "child",
-  "Jemma::Schema::Result::Service",
-  { id => "child" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
-);
-
 =head2 objectsetlists
 
 Type: has_many
@@ -103,24 +99,39 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
-=head2 parent
+=head2 servicegrpgrps
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Servicegrpgrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "servicegrpgrps",
+  "Jemma::Schema::Result::Servicegrpgrp",
+  { "foreign.servicegrp" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 source
 
 Type: belongs_to
 
-Related object: L<Jemma::Schema::Result::Service>
+Related object: L<Jemma::Schema::Result::Source>
 
 =cut
 
 __PACKAGE__->belongs_to(
-  "parent",
-  "Jemma::Schema::Result::Service",
-  { id => "parent" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  "source",
+  "Jemma::Schema::Result::Source",
+  { id => "source" },
+  { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-14 11:35:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:irHnLGmHqYwOIu/3Msyfkw
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:32:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CNM5Cw4Eio8EWhoTl/HhaQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

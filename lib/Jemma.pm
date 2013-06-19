@@ -3,7 +3,12 @@ use Mojo::Base 'Mojolicious';
 use Jemma::Utils;
 
 has schema => sub {
-  return Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+  return Jemma::Schema->connect(
+    'dbi:SQLite:data.sqlite',
+    '', '',
+    {},
+    { on_connect_do => 'PRAGMA foreign_keys=on'}
+  );
 };
 
 # This method will run once at server start
@@ -33,6 +38,7 @@ sub startup {
 
   $self->helper(n2ip => sub { Jemma::Utils::number_to_ip($_[1]) } );
   $self->helper(r2c  => sub { Jemma::Utils::range_to_cidr($_[1], $_[2]) } );
+  $self->helper(commify => sub { Jemma::Utils::commify($_[1]) } );
 }
 
 1;

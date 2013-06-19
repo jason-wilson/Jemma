@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<ipextra>
 
 =cut
@@ -84,12 +96,12 @@ __PACKAGE__->belongs_to(
   "ip",
   "Jemma::Schema::Result::Ip",
   { id => "ip" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-29 15:27:06
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/LqLFHphP4BcbzjM1Q60EQ
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-06-19 15:17:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vwhw1K6w+UMrG0q2IiFl1g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -6,8 +6,9 @@ use lib 'lib';
 use Data::Dumper;
 use Jemma::Import::Checkpoint;
 use Jemma::Schema;
+use Jemma;
 
-my ($schema) = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+my ($schema) = Jemma->schema;
 
 my $code = sub {
   for my $file (@ARGV) {
