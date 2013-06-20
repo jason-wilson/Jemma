@@ -13,20 +13,24 @@
       </div>
 
       <div class="menu">
-        <%= link_to "Sources"    => '/source' %> <br />
-        <%= link_to "IP list"    => '/ip'     %> <br />
-        <%= link_to "Service list" => '/service'     %> <br />
-        <%= link_to "Group list" => '/group'  %> <br />
-        <%= link_to "FW Rules" => '/fwrule'  %> <br />
+        <%= link_to "Sources"        => '/source'     %> <br />
+        <%= link_to "IP's"           => '/ip'         %> <br />
+        <%= link_to "IP Group's"     => '/group'      %> <br />
+        <%= link_to "Service's"      => '/service'    %> <br />
+        <%= link_to "Service Groups" => '/servicegrp' %> <br />
+        <%= link_to "FW Rules"       => '/fwrule'     %> <br />
 	<hr />
 
 	<%= form_for '/ip/search' => (method => 'post') => begin %>
-	  IP: <%= text_field 'ip' %>
-	  <%= submit_button 'Search' %>
+	  IP: <%= search_field 'ip', size => 18 %>
 	<% end %><br />
+
 	<%= form_for '/group/search' => (method => 'post') => begin %>
-	  Group: <%= text_field 'group' %>
-	  <%= submit_button 'Search' %>
+	  Group: <%= search_field 'group', size => 14 %>
+	<% end %><br />
+
+	<%= form_for '/service/search' => (method => 'post') => begin %>
+	  Service: <%= search_field 'service', size => 14 %>
 	<% end %><br />
 
 	<hr />

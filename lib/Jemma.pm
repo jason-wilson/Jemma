@@ -30,11 +30,13 @@ sub startup {
   $r->get('/grp/name/*name')  ->to(controller => 'group',  action => 'name' );
 
   $r->get('/service')         ->to(controller => 'service', action => 'show' );
+  $r->get('/service/name/*name')->to(controller => 'service', action => 'name');
 
   $r->get('/fwrule')          ->to(controller => 'fwrule', action => 'show' );
 
   $r->post('/ip/search')      ->to(controller => 'ip',     action => 'search' );
   $r->post('/group/search')   ->to(controller => 'group',  action => 'search' );
+  $r->post('/service/search') ->to(controller => 'service', action => 'search');
 
   $self->helper(n2ip => sub { Jemma::Utils::number_to_ip($_[1]) } );
   $self->helper(r2c  => sub { Jemma::Utils::range_to_cidr($_[1], $_[2]) } );

@@ -1,0 +1,23 @@
+% layout 'jemma', title => 'Service: ' . $name;
+
+<table border="1">
+  <tr>
+     <th>Name</th>
+     <th>Protocol</th>
+     <th>Ports</th>
+     <th>Description</th>
+     <th>Source</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$service) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= link_to $line->name => '/service/name/' . $line->name %></td>
+      <td><%= $line->protocol %></td>
+      <td align=right><%= $line->ports %></td>
+      <td><%= $line->description %></td>
+      <td><%= $line->source->name %></td>
+    </tr>
+  % }
+</table>
+

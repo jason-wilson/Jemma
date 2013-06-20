@@ -1,0 +1,5 @@
+#!/bin/bash
+
+time script/import_mcafee ~/ip/innerguard-config.all
+time script/import_checkpoint objects_5_0.C
+time script/import_hosts /etc/hosts
