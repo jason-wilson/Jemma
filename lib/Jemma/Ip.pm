@@ -7,9 +7,15 @@ sub show {
 
   my $schema = Jemma->schema;
 
+  my $source = $self->param('source');
+  my @search;
+  push @search, 'source.name', $source if defined $source;
+
   my @ip;
   for my $line ($schema->resultset('Ip')->search(
-    { },
+    {
+      @search,
+    },
     {
       prefetch => 'source',
       order_by => 'start',

@@ -41,7 +41,6 @@ sub name {
     },
     {
       join     => { service => { 'objectsetlists' => 'service' } },
-      prefetch => "service",
       order_by => 'me.number',
     }
   )]);

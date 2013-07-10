@@ -13,7 +13,7 @@ my $schema = Jemma->schema;
 
 my $code = sub {
   for my $file (@ARGV) {
-    my ($source) = 'hosts-' . $file;
+    my ($source) = 'hosts';
     my ($x) = Jemma::Import::Hosts->new(name => $source);
 
     $x->importdata(
