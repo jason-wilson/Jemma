@@ -124,3 +124,15 @@ CREATE TABLE "fwrule" (
   FOREIGN KEY ("destination") REFERENCES "objectset"("id") ON DELETE CASCADE
   FOREIGN KEY ("source")      REFERENCES "source"("id") ON DELETE CASCADE
 );
+
+DROP TABLE "route";
+CREATE TABLE "route" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "start"       INTEGER NOT NULL,
+  "end"         INTEGER NOT NULL,
+  "interface"	TEXT NOT NULL,
+  "gateway"     INTEGER NOT NULL,
+  "metric"      INTEGER,
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("source")      REFERENCES "source"("id") ON DELETE CASCADE
+);
