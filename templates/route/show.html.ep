@@ -1,0 +1,23 @@
+% layout 'jemma', title => 'Routes';
+
+<table border="1">
+  <tr>
+     <th>Route</th>
+     <th>Interface</th>
+     <th>Gateway</th>
+     <th>Metric</th>
+     <th>Source</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$route) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= r2c($line->start, $line->end) %> </td>
+      <td><%= $line->interface %></td>
+      <td><%= n2ip($line->gateway) %></td>
+      <td align=right><%= $line->metric %></td>
+      <td><%= $line->source->name %></td>
+    </tr>
+  % }
+</table>
+

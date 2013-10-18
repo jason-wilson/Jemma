@@ -9,6 +9,7 @@
      <th>Source</th>
      <th>Destination</th>
      <th>Service</th>
+     <th>Source</th>
   </tr>
 
   % my $cnt = 0;
@@ -33,6 +34,7 @@
 	  <%= link_to $obj => "/" . $objs->{$line->service->id}{$obj} . "/name/" . $obj %><br />
 	<% } %>
       </td>
+      <td><%= $line->source->name %></td>
     </tr>
   % }
 </table>

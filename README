@@ -1,0 +1,4 @@
+
+To update database schema use:
+  dbicdump  -o dump_directory=./lib Jemma::Schema dbi:SQLite:data.sqlite
+

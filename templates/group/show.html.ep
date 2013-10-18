@@ -7,8 +7,9 @@
      <th>Source</th>
   </tr>
 
+  % my $cnt = 0;
   % for my $line (@$group) {
-    <tr>
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
       <td><%= link_to $line->name => '/group/name/' . $line->name %> </td>
       <td><%= $line->description %></td>
       <td><%= $line->source->name %></td>

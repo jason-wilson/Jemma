@@ -19,6 +19,7 @@
         <%= link_to "Service's"      => '/service'    %> <br />
         <%= link_to "Service Groups" => '/servicegrp' %> <br />
         <%= link_to "FW Rules"       => '/fwrule'     %> <br />
+        <%= link_to "Routes"         => '/route'      %> <br />
 	<hr />
 
 	<%= form_for '/ip/search' => (method => 'post') => begin %>

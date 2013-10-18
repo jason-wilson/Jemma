@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::Juniper;
+use Jemma::Schema;
+use Jemma;
+
+my ($schema) = Jemma->schema;
+
+my $code = sub {
+  for my $file (@ARGV) {
+    my ($source) = 'Juniper';
+    my ($x) = Jemma::Import::Juniper->new(name => $source);
+
+    print "Importing $file\n";
+
+    $x->importdata(
+      $schema,
+      $source,
+      $file,
+    );
+  }
+};
+$schema->txn_do($code);

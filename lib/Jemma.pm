@@ -36,6 +36,7 @@ sub startup {
   $r->get('/service/name/#name')->to(controller => 'service', action => 'name');
 
   $r->get('/fwrule')          ->to(controller => 'fwrule', action => 'show' );
+  $r->get('/route')           ->to(controller => 'route',  action => 'show' );
 
   $r->post('/ip/search')      ->to(controller => 'ip',     action => 'search' );
   $r->post('/group/search')   ->to(controller => 'group',  action => 'search' );
