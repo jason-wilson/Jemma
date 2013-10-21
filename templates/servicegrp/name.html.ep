@@ -1,0 +1,20 @@
+% layout 'jemma', title => 'Service Group: '. $name;
+
+<table border="1">
+  <tr>
+     <th>Source</th>
+     <th>Member</th>
+     <th>Description</th>
+     <th>Data</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$svc) {
+    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $line->service->source->name %> </td>
+      <td><%= link_to $line->service->name => '/service/name/' . $line->service->name %> </td>
+      <td><%= $line->service->description %> </td>
+    </tr>
+  % }
+
+</table>

@@ -26,6 +26,8 @@ sub show {
     my $type = $obj->type;
     die "Has no type\n" unless defined $type;
 
+    print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, "\n";
+    print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, 'and name', $obj->$type->name, "\n";
     if ($type eq 'any') {
       $objs{$obj->objectset->id}{'any'} = 'ip';
     } else {

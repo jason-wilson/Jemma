@@ -34,6 +34,8 @@ sub startup {
 
   $r->get('/service')         ->to(controller => 'service', action => 'show' );
   $r->get('/service/name/#name')->to(controller => 'service', action => 'name');
+  $r->get('/servicegrp')      ->to(controller => 'servicegrp', action => 'show' );
+  $r->get('/servicegrp/name/#name')->to(controller => 'servicegrp', action => 'name');
 
   $r->get('/fwrule')          ->to(controller => 'fwrule', action => 'show' );
   $r->get('/route')           ->to(controller => 'route',  action => 'show' );

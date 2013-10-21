@@ -52,6 +52,20 @@ sub show {
   }
   $self->stash(services => \@services );
 
+  my @svcgrps;
+  for my $svc ($schema->resultset('Servicegrp')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    $svcgrps[$svc->source->id] = $svc->get_column('howmany');
+  }
+  $self->stash(svcgrps => \@svcgrps );
+
   my @fwrules;
   for my $fw ($schema->resultset('Fwrule')->search(
       {

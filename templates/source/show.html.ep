@@ -10,6 +10,7 @@
      <th>IP Objects</th>
      <th>Group Objects</th>
      <th>Services</th>
+     <th>Service Groups</th>
      <th>FW Rules</th>
   </tr>
 
@@ -21,6 +22,7 @@
       <td align=right><%= commify(@$ips[$line->id])      %></td>
       <td align=right><%= commify(@$groups[$line->id])   %></td>
       <td align=right><%= commify(@$services[$line->id]) %></td>
+      <td align=right><%= commify(@$svcgrps[$line->id]) %></td>
       <td align=right><%= commify(@$fwrules[$line->id])  %></td>
     </tr>
   % }
