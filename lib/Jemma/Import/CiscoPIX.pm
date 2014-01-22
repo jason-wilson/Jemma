@@ -41,6 +41,8 @@ sub importdata {
   while (<$fh>) {
     s/[\n\r]+$//;
     #print "$_\n";
+    #
+    last if /^: end/;
 
     if (/^name ([\d\.]+) (.*)/) {
       my ($ip, $name) = ($1, $2);
@@ -73,7 +75,7 @@ sub importdata {
     #print "    group=$group svcgrp=$svcgrp\n";
 
     if (defined $group and /^ description (.*)/) {
-      print " Create group $group\n";
+      #print " Create group $group\n";
       my $id = $schema->resultset('Grp')->create( {
         name        => $group,
 	description => $1,
@@ -85,29 +87,32 @@ sub importdata {
     if (defined $svcgrp and /^ description (.*)/) {
       my $desc = $1;
       my ($name, $proto) = split /\s+/, $svcgrp;
-      print " Create service group $name with $proto\n";
+      #print " Create service group $name with $proto\n";
       my $id = $schema->resultset('Servicegrp')->create( {
         name        => $name,
 	description => $desc,
 	source      => $source,
       });
-      $db{svcgrp}{$svcgrp}{id} = $id;
-      $db{svcgrp}{$svcgrp}{proto} = $proto;
+      $db{svcgrp}{$name}{id} = $id;
+      $db{svcgrp}{$name}{proto} = $proto;
     }
 
 
-    if (/^ port-object eq (.*)/) {
+    if (/^ port-object (.*)/) {
       my $service = $1;
+      $service = $1 if $service =~ /^eq (.*)/;
+      $service = join '-', $1, $2 if $service =~ /^range (\d+) (\d+)/;
 
-      if (defined $svcgrp and ! defined $db{svcgrp}{$svcgrp}{id}) {
-	my ($name, $proto) = split /\s+/, $svcgrp;
+      my ($name, $proto) = split /\s+/, $svcgrp;
+
+      if (defined $svcgrp and ! defined $db{svcgrp}{$name}{id}) {
 	my $id = $schema->resultset('Servicegrp')->create( {
 	  name        => $name,
 	  description => "$name over $proto",
 	  source      => $source,
 	});
-	$db{svcgrp}{$svcgrp}{id} = $id;
-	$db{svcgrp}{$svcgrp}{proto} = $proto;
+	$db{svcgrp}{$name}{id} = $id;
+	$db{svcgrp}{$name}{proto} = $proto;
       }
 
       my $id = $db{service}{$service}{id};
@@ -115,7 +120,7 @@ sub importdata {
 	my $ports = $service =~ /^\d+$/ ? $service : 'unknown';
 	$id = $schema->resultset('Service')->create( {
 	  name      => $service,
-	  protocol  => $db{svcgrp}{$svcgrp}{proto},
+	  protocol  => $db{svcgrp}{$name}{proto},
 	  ports     => $ports,
 	  source    => $source,
 	});
@@ -123,7 +128,7 @@ sub importdata {
       }
 
       $schema->resultset('Servicegrpgrp')->create( {
-	servicegrp => $db{svcgrp}{$svcgrp}{id},
+	servicegrp => $db{svcgrp}{$name}{id},
 	service    => $id,
       });
 
@@ -132,7 +137,7 @@ sub importdata {
     if (/^ network-object / or /^ group-object / ) {
 
       if (defined $group and ! defined $db{group}{$group}{id}) {
-	print " Create new group: $group\n";
+	#print " Create new group: $group\n";
 	my $id = $schema->resultset('Grp')->create( {
 	  name        => $group,
 	  description => "$group",
@@ -145,7 +150,7 @@ sub importdata {
 	my $ip = $1;
 	my $id = $db{ip}{$ip}{id};
 	if (! $id) {
-	  print " Create new host: $1\n";
+	  #print " Create new host: $1\n";
 	  my $num_ip = Jemma::Utils::ip_to_number($ip);
 	  $id = $schema->resultset('Ip')->create( {
 	    start       => $num_ip,
@@ -165,7 +170,7 @@ sub importdata {
 
       if (defined $group and /^ group-object (\S+)/) {
 	my $name = $1;
-	print "  Add sub-group $name to $group\n";
+	#print "  Add sub-group $name to $group\n";
 
 	$schema->resultset('Grpgrp')->create( {
 	  parent  => $db{group}{$group}{id},
@@ -175,9 +180,15 @@ sub importdata {
 
     }
 
-    if (/^access-list (\S+) extended (\w+) (\w+) (.*)/) {
+    print "$_\n" if /^access-list/;
+    if (/^access-list (\S+) extended (\S+) (\S+) (.*)/) {
       # Got an ACL, with group name, action, protocol and rest of line
       my ($name, $action, $proto, $rest) = ($1, $2, $3, $4);
+      if ($proto eq 'object-group') {
+        warn "$rule_num: Don't support groups of protocols yet, fudging...\n";
+	$proto = 'any';
+	$rest =~ s:\S+\s::;
+      }
 
       my (@rest) = split /\s+/, $rest;
       my ($src, $src2, $dst, $dst2, $svc, $svc2);
@@ -200,11 +211,15 @@ sub importdata {
       if (! defined $svc) {
 	$svc = 'any';
         $svc2 = 'any';
+      } elsif ($svc eq 'eq') {
+        $svc = shift @rest;
+	$svc2 //= 'n/a';
       } else {
-        $svc2 = shift @rest;
+	$svc2 = shift @rest;
+	$svc2 //= 'any';
       }
 
-      print "Name: $name\n";
+      print "Name($rule_num): $name\n";
       print "  Action : $action\n";
       print "  Proto  : $proto\n";
       print "  Source : $src and $src2\n";
@@ -305,13 +320,35 @@ sub importdata {
 	$id = $db{ip}{$name}{id};
       }
 
-      die "No dst id\n" unless defined $id;
+      die "No dst id: $_\n" unless defined $id;
       $schema->resultset('Objectsetlist')->create( {
         objectset => $dst_id,
 	type	  => $type,
 	$type     => $id,
       } );
 
+      if ($svc eq 'object-group') {
+	$type = 'servicegrp';
+        $id = $db{svcgrp}{$svc2}{id};
+      } else {
+	$type = 'service';
+	$id = $db{service}{$svc}{id};
+      }
+      if (! defined $id) {
+	$db{service}{$svc}{id} = $schema->resultset('Service')->create( {
+	  name => $svc,
+	  protocol => $proto,
+	  source => $source })->id;
+	$id = $db{service}{$svc}{id};
+      }
+
+      $schema->resultset('Objectsetlist')->create( {
+        objectset => $svc_id,
+	type	  => $type,
+	$type     => $id,
+      } );
+
+      # And finally create the actual rule
       $schema->resultset('Fwrule')->create( {
 	number      => $rule_num,
 	name        => $name,
@@ -323,155 +360,10 @@ sub importdata {
       });
 
       $rule_num++;
-
+      #last if $rule_num > 10;
 
     }
-
-    if (/^set policy id (\d+) name "([^"]*)" from "([^"]*)" to "([^"]*)"  "([^"]*)" "([^"]*)" "([^"]*)" (.+)/) {
-      $num = $1;
-      my ($name, $szone, $dzone, $src, $dst, $service, $action) = ($2, $3, $4, $5, $6, $7, $8);
-      $db{rule}{$rule_num}{name} = $name;
-      $db{rule}{$rule_num}{src}{$src}++;
-      $db{rule}{$rule_num}{dst}{$dst}++;
-      $db{rule}{$rule_num}{service}{$service}++;
-      $db{rule}{$rule_num}{action} = $action;
-      next;
-    }
-
-    if (/^set policy id (\d+) from "([^"]*)" to "([^"]*)"  "([^"]*)" "([^"]*)" "([^"]*)" (.+)/) {
-      $num = $1;
-      my ($szone, $dzone, $src, $dst, $service, $action) = ($2, $3, $4, $5, $6, $7);
-      $db{rule}{$rule_num}{name} = "Rule id $num";
-      $db{rule}{$rule_num}{src}{$src}++;
-      $db{rule}{$rule_num}{dst}{$dst}++;
-      $db{rule}{$rule_num}{service}{$service}++;
-      $db{rule}{$rule_num}{action} = $action;
-      next;
-    }
-    next if /^set policy id (\d+)$/;
-
-    if (defined $num) {
-      $num = undef, $rule_num++, next if /^exit/;
-      $db{rule}{$rule_num}{disable}++,     next if /^set policy id (\d+) disable$/;
-      $db{rule}{$rule_num}{src}{$1}++,     next if /^set src-address "([^"]*)"/;
-      $db{rule}{$rule_num}{dst}{$1}++,     next if /^set dst-address "([^"]*)"/;
-      $db{rule}{$rule_num}{service}{$1}++, next if /^set service "([^"]*)"/;
-      warn "Try: $_\n";
-    }
-
-    if (/^set route ([\d\.\/]+) interface (\w+) gateway ([\d\.]+)/) {
-      my ($ip, $intf, $gw) = ($1, $2, $3);
-      print "Add $ip through $intf to $gw\n";
-
-      my ($start, $end) = Jemma::Utils::cidr_to_range($ip);
-      $gw = Jemma::Utils::ip_to_number($gw);
-
-      my $id = $schema->resultset('Route')->create( {
-	start       => $start,
-	end         => $end,
-	interface   => $intf,
-	gateway     => $gw,
-	metric      => 0,
-	source      => $source,
-      });
-    }
-
   }
-
-  for my $r (keys %{$db{rule}}) {
-
-    my $src_id = $schema->resultset('Objectset')->create( {
-      name => "src: $r", source => $source })->id;
-    my $dst_id = $schema->resultset('Objectset')->create( {
-      name => "dst: $r", source => $source })->id;
-    my $svc_id = $schema->resultset('Objectset')->create( {
-      name => "svc: $r", source => $source })->id;
-
-    for (keys %{$db{rule}{$r}{src}} ) {
-      my ($type, $id);
-
-      if (defined $db{ip}{$_}{id}) {
-        $type = 'ip';
-	$id = $db{ip}{$_}{id};
-      }
-      if (defined $db{group}{$_}{id}) {
-        $type = 'grp';
-	$id = $db{group}{$_}{id};
-      }
-
-      die "Unknown type in rule $r for name '$_'\n" unless defined $type;
-
-      $schema->resultset('Objectsetlist')->create( {
-        objectset => $src_id,
-	type	  => $type,
-	$type     => $id,
-      } );
-
-    }
-
-    for (keys %{$db{rule}{$r}{dst}} ) {
-      my ($type, $id);
-
-      if (/^VIP\((.*)\)/) {
-	my $ip = $1;
-	my $start = Jemma::Utils::ip_to_number($ip);
-	my $id = $schema->resultset('Ip')->create( {
-	  start       => $start,
-	  end         => $start,
-	  name        => $_,
-	  description => "VIP $ip",
-	  source      => $source,
-	});
-	$db{ip}{$_}{id} = $id;
-      }
-
-      if (defined $db{ip}{$_}{id}) {
-        $type = 'ip';
-	$id = $db{ip}{$_}{id};
-      }
-      if (defined $db{group}{$_}{id}) {
-        $type = 'grp';
-	$id = $db{group}{$_}{id};
-      }
-
-      die "Unknown type in rule $r for name '$_'\n" unless defined $type;
-      $schema->resultset('Objectsetlist')->create( {
-        objectset => $dst_id,
-	type	  => $type,
-	$type     => $id,
-      } );
-    }
-
-    for (keys %{$db{rule}{$r}{service}} ) {
-      my $type = 'service';
-      my $id = $db{service}{$_}{id};
-
-      if (! defined $id) {
-	$db{service}{$_}{id} = $schema->resultset('Service')->create( {
-	  name => $_,
-	  protocol => 'tcp',
-	  source => $source })->id;
-	$id = $db{service}{$_}{id};
-      }
-
-      $schema->resultset('Objectsetlist')->create( {
-        objectset => $svc_id,
-	type	  => $type,
-	$type     => $id,
-      } );
-    }
-
-    $schema->resultset('Fwrule')->create( {
-      number      => $r,
-      name        => $db{rule}{$r}{name},
-      action      => $db{rule}{$r}{action},
-      sourceset   => $src_id,
-      destination => $dst_id,
-      service     => $svc_id,
-      source      => $source,
-    });
-  }
-
 }
 
 1;
