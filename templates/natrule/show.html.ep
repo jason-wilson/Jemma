@@ -1,0 +1,61 @@
+% layout 'jemma', title => 'NAT rule list';
+
+<table border="1">
+  <tr>
+     <th>#</th>
+     <th>Name</th>
+     <th>Description</th>
+     <th>Type</th>
+     <th>Source</th>
+     <th>Destination</th>
+     <th>Service</th>
+     <th>Source</th>
+     <th>Destination</th>
+     <th>Service</th>
+     <th>Source</th>
+  </tr>
+
+  % my $cnt = 0;
+  % for my $line (@$natrule) {
+    % my ($class) = ++$cnt % 2 ? "alt" : "normal";
+    % $class = 'disabled' if !$line->enabled;
+    <tr class="<%= $class %>">
+      <td><%= $line->number %></td>
+      <td><%= $line->name %></td>
+      <td><%= $line->description %></td>
+      <td><%= $line->nattype %></td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->origsrcset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->origsrcset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->origdstset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->origdstset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->origsvcset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->origsvcset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->natsrcset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->natsrcset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->natdstset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->natdstset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td>
+	<% foreach my $obj (keys %{$objs->{$line->natsvcset->id}}) {
+	  <%= link_to $obj => "/" . $objs->{$line->natsvcset->id}{$obj} . "/name/" . $obj %><br />
+	<% } %>
+      </td>
+      <td><%= $line->source->name %></td>
+    </tr>
+  % }
+</table>
+
