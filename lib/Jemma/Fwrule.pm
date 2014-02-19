@@ -7,10 +7,17 @@ sub show {
 
   my $schema = Jemma->schema;
 
+  my $source = $self->param('source');
+  my @search;
+  push @search, 'source.name', $source if defined $source;
+
   $self->stash(fwrule => [
-    $schema->resultset('Fwrule')->search( {},
+    $schema->resultset('Fwrule')->search(
       {
-        prefetch => [ 'sourceset', 'destination', 'service' ],
+        @search,
+      },
+      {
+        prefetch => [ 'source', 'sourceset', 'destination', 'service' ],
 	order_by => 'number',
       }
       )]);
@@ -26,8 +33,8 @@ sub show {
     my $type = $obj->type;
     die "Has no type\n" unless defined $type;
 
-    print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, "\n";
-    print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, 'and name', $obj->$type->name, "\n";
+    #print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, "\n";
+    #print join ' ', 'obj', $obj, '(' . $obj->id . ')', 'has type', $type, 'and name', $obj->$type->name, "\n";
     if ($type eq 'any') {
       $objs{$obj->objectset->id}{'any'} = 'ip';
     } else {

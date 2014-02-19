@@ -24,6 +24,8 @@ CREATE TABLE "ipextra" (
   "ip" INTEGER NOT NULL,
   "key" TEXT NOT NULL,
   "value" TEXT,
+  "source" INTEGER,
+  FOREIGN KEY ("source") REFERENCES "source"("id") ON DELETE CASCADE
   FOREIGN KEY ("ip") REFERENCES "ip"("id") ON DELETE CASCADE
 );
 
@@ -113,15 +115,44 @@ CREATE TABLE "fwrule" (
   "id"          INTEGER PRIMARY KEY NOT NULL,
   "number"	INTEGER NOT NULL,
   "name"        TEXT NOT NULL,
+  "enabled"     BOOLEAN DEFAULT 1,
   "action"      TEXT NOT NULL,
+  "svcnot"      BOOLEAN DEFAULT 0,
   "service"     INTEGER,
+  "srcnot"	BOOLEAN DEFAULT 0,
   "sourceset"	INTEGER,
+  "dstnot"	BOOLEAN DEFAULT 0,
   "destination"	INTEGER,
   "description" TEXT,
+  "track"       TEXT,
   "source"      INTEGER NOT NULL,
   FOREIGN KEY ("service")     REFERENCES "objectset"("id") ON DELETE CASCADE
   FOREIGN KEY ("sourceset")   REFERENCES "objectset"("id") ON DELETE CASCADE
   FOREIGN KEY ("destination") REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("source")      REFERENCES "source"("id") ON DELETE CASCADE
+);
+
+DROP TABLE "natrule";
+CREATE TABLE "natrule" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "number"	INTEGER NOT NULL,
+  "name"        TEXT NOT NULL,
+  "enabled"     BOOLEAN DEFAULT 1,
+  "origsrcset"	INTEGER,
+  "origdstset"	INTEGER,
+  "origsvcset"	INTEGER,
+  "natsrcset"	INTEGER,
+  "natdstset"	INTEGER,
+  "natsvcset"	INTEGER,
+  "nattype"     TEXT,
+  "description" TEXT,
+  "source"      INTEGER NOT NULL,
+  FOREIGN KEY ("origsrcset")  REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("origdstset")  REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("origsvcset")  REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("natsrcset")   REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("natdstset")   REFERENCES "objectset"("id") ON DELETE CASCADE
+  FOREIGN KEY ("natsvcset")   REFERENCES "objectset"("id") ON DELETE CASCADE
   FOREIGN KEY ("source")      REFERENCES "source"("id") ON DELETE CASCADE
 );
 

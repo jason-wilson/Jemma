@@ -45,6 +45,12 @@ __PACKAGE__->table("ipextra");
   data_type: 'text'
   is_nullable: 1
 
+=head2 source
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -56,6 +62,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "value",
   { data_type => "text", is_nullable => 1 },
+  "source",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -87,9 +95,29 @@ __PACKAGE__->belongs_to(
   { is_deferrable => 0, on_delete => "CASCADE", on_update => "NO ACTION" },
 );
 
+=head2 source
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-18 17:42:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+tAfaTHBz4g7VrrMgy9BfQ
+Type: belongs_to
+
+Related object: L<Jemma::Schema::Result::Source>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "source",
+  "Jemma::Schema::Result::Source",
+  { id => "source" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "CASCADE",
+    on_update     => "NO ACTION",
+  },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2014-01-23 11:09:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/IZLRLelCNHI7V7w4aZOtg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

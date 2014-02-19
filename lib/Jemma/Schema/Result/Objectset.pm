@@ -110,6 +110,96 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 natrule_natdstsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_natdstsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.natdstset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrule_natsrcsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_natsrcsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.natsrcset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrule_natsvcsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_natsvcsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.natsvcset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrule_origdstsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_origdstsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.origdstset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrule_origsrcsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_origsrcsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.origsrcset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrule_origsvcsets
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrule_origsvcsets",
+  "Jemma::Schema::Result::Natrule",
+  { "foreign.origsvcset" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 objectsetlists
 
 Type: has_many
@@ -141,8 +231,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-18 17:42:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:kI/UnMh6Cpt8GZtKWZsTCQ
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2014-01-24 08:10:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bpaT8oolrb3i3IC5/ifviA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -15,3 +15,8 @@ tr.alt
 {
   background-color: #EAF2D3
 }
+
+tr.disabled
+{
+  background-color: #FF0000
+}

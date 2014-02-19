@@ -1,5 +1,20 @@
-<% for my $line (@$ip) {
-<% foreach my $l (split(/ /, r2c($line->start, $line->end))) { =%>
-<%= $l %> <%= $line->name %>
-<% } =%>
+% for my $line (@$ip) {
+  % my $size = $line->end - $line->start;
+  % my $netmask = r2n($line->start, $line->end);
+  % if ($size < 1) {
+create host_plain <%= $line->name %>
+modify network_objects <%= $line->name %> ipaddr <%= n2ip($line->start) %>
+  % } elsif ($netmask eq 'undefined') {
+create address_range <%= $line->name %>
+modify network_objects <%= $line->name %> ipaddr_first <%= n2ip($line->start) %>
+modify network_objects <%= $line->name %> ipaddr_last <%= n2ip($line->end) %>
+  % } else {
+create network <%= $line->name %>
+modify network_objects <%= $line->name %> ipaddr <%= n2ip($line->start) %>
+modify network_objects <%= $line->name %> netmask <%= r2n($line->start, $line->end) %>
+  % }
+modify network_objects <%= $line->name %> comments "<%= $line->description %>"
+modify network_objects <%= $line->name %> color "<%= $ipextra->{$line->id} %>"
 % }
+update_all
+quit

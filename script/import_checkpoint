@@ -11,17 +11,13 @@ use Jemma;
 my ($schema) = Jemma->schema;
 
 my $code = sub {
-  for my $file (@ARGV) {
-    my ($source) = 'Outerguard';
-    my ($x) = Jemma::Import::Checkpoint->new(name => $source);
+  my ($source) = shift @ARGV;
+  my ($x) = Jemma::Import::Checkpoint->new(name => $source);
 
-    print "Importing $file\n";
-
-    $x->importdata(
-      $schema,
-      $source,
-      $file,
-    );
-  }
+  $x->importdata(
+    $schema,
+    $source,
+    @ARGV,
+  );
 };
 $schema->txn_do($code);

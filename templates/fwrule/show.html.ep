@@ -9,22 +9,27 @@
      <th>Source</th>
      <th>Destination</th>
      <th>Service</th>
+     <th>Track</th>
      <th>Source</th>
   </tr>
 
   % my $cnt = 0;
   % for my $line (@$fwrule) {
-    <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+    % my ($class) = ++$cnt % 2 ? "alt" : "normal";
+    % $class = 'disabled' if !$line->enabled;
+    <tr class="<%= $class %>">
       <td><%= $line->number %></td>
       <td><%= $line->name %></td>
       <td><%= $line->description %></td>
       <td><%= $line->action %></td>
-      <td>
+      % my $bg = $line->srcnot ? 'bgcolor=orange' : '';
+      <td <%= $bg %>>
 	<% foreach my $obj (keys %{$objs->{$line->sourceset->id}}) {
 	  <%= link_to $obj => "/" . $objs->{$line->sourceset->id}{$obj} . "/name/" . $obj %><br />
 	<% } %>
       </td>
-      <td>
+      % $bg = $line->dstnot ? 'bgcolor=orange' : '';
+      <td <%= $bg %>>
 	<% foreach my $obj (keys %{$objs->{$line->destination->id}}) {
 	  <%= link_to $obj => "/" . $objs->{$line->destination->id}{$obj} . "/name/" . $obj %><br />
 	<% } %>
@@ -34,6 +39,7 @@
 	  <%= link_to $obj => "/" . $objs->{$line->service->id}{$obj} . "/name/" . $obj %><br />
 	<% } %>
       </td>
+      <td><%= $line->track %></td>
       <td><%= $line->source->name %></td>
     </tr>
   % }

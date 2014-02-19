@@ -2,11 +2,13 @@
 
 <table border="1">
   <tr>
+     <th>ID</th>
      <th>Start</th>
      <th>End</th>
      <th>CIDR</th>
      <th>Size</th>
      <th>Name</th>
+     <th>Color</th>
      <th>Description</th>
      <th>Source</th>
   </tr>
@@ -14,6 +16,7 @@
   % my $cnt = 0;
   % for my $line (@$ip) {
     <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= link_to $line->id => '/ip/id/' . $line->id %></td>
       <td><%= n2ip($line->start) %></td>
       <td><%= n2ip($line->end) %></td>
       <td>
@@ -21,8 +24,9 @@
 	  <%= $l %><br />
 	<% } %>
       </td>
-      <td align=right><%= $line->end - $line->start +1 %></td>
+      <td align=right><%= commify($line->end - $line->start +1) %></td>
       <td><%= link_to $line->name => '/ip/name/' . $line->name %></td>
+      <td><%= $ipextra->{$line->id} %></td>
       <td><%= $line->description %></td>
       <td><%= $line->source->name %></td>
     </tr>

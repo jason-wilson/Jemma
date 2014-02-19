@@ -23,7 +23,8 @@
       <td align=right><%= commify(@$groups[$line->id])   %></td>
       <td align=right><%= commify(@$services[$line->id]) %></td>
       <td align=right><%= commify(@$svcgrps[$line->id]) %></td>
-      <td align=right><%= commify(@$fwrules[$line->id])  %></td>
+      <td align=right>
+        <%= link_to commify(@$fwrules[$line->id]) => '/fwrule?source=' . $line->name  %></td>
     </tr>
   % }
 

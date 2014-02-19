@@ -1,0 +1,6 @@
+% for my $line (@$group) {
+create network_object_group <%= $line->name %>
+addelement network_objects <%= $line->name %> '' network_objects:X
+% }
+update_all
+quit

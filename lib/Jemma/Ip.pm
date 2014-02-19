@@ -17,7 +17,7 @@ sub show {
       @search,
     },
     {
-      prefetch => 'source',
+      prefetch => [ 'source' ],
       order_by => 'start',
     }
   )) {
@@ -25,6 +25,19 @@ sub show {
   }
 
   $self->stash(ip => \@ip);
+
+  my %ipextra;
+  for my $i ($schema->resultset('Ipextra')->search(
+    {
+      key => 'color',
+    },
+    {
+    }
+  )) {
+    $ipextra{$i->id} = $i->value;
+  };
+  $self->stash(ipextra => \%ipextra);
+    
 }
 
 sub match {
@@ -44,6 +57,31 @@ sub match {
     }
   )) {
     push @ip, $line;
+  }
+  $self->stash(ip => \@ip);
+
+}
+
+sub duplicate {
+  my $self = shift;
+
+  my $schema = Jemma->schema;
+  my %d;
+
+  my @ip;
+  for my $line ($schema->resultset('Ip')->search(
+     { },
+     {
+       prefetch => 'source',
+       order_by => 'start'
+     },
+  )) {
+    my $k = $line->start . '-' . $line->end;
+    if (exists $d{$k}) {
+      push @ip, $d{$k}, $line;
+    } else {
+      $d{$k} = $line;
+    }
   }
   $self->stash(ip => \@ip);
 

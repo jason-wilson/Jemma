@@ -39,10 +39,22 @@ __PACKAGE__->table("fwrule");
   data_type: 'text'
   is_nullable: 0
 
+=head2 enabled
+
+  data_type: 'boolean'
+  default_value: 1
+  is_nullable: 1
+
 =head2 action
 
   data_type: 'text'
   is_nullable: 0
+
+=head2 svcnot
+
+  data_type: 'boolean'
+  default_value: 0
+  is_nullable: 1
 
 =head2 service
 
@@ -50,10 +62,22 @@ __PACKAGE__->table("fwrule");
   is_foreign_key: 1
   is_nullable: 1
 
+=head2 srcnot
+
+  data_type: 'boolean'
+  default_value: 0
+  is_nullable: 1
+
 =head2 sourceset
 
   data_type: 'integer'
   is_foreign_key: 1
+  is_nullable: 1
+
+=head2 dstnot
+
+  data_type: 'boolean'
+  default_value: 0
   is_nullable: 1
 
 =head2 destination
@@ -63,6 +87,11 @@ __PACKAGE__->table("fwrule");
   is_nullable: 1
 
 =head2 description
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 track
 
   data_type: 'text'
   is_nullable: 1
@@ -82,15 +111,25 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 0 },
   "name",
   { data_type => "text", is_nullable => 0 },
+  "enabled",
+  { data_type => "boolean", default_value => 1, is_nullable => 1 },
   "action",
   { data_type => "text", is_nullable => 0 },
+  "svcnot",
+  { data_type => "boolean", default_value => 0, is_nullable => 1 },
   "service",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "srcnot",
+  { data_type => "boolean", default_value => 0, is_nullable => 1 },
   "sourceset",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "dstnot",
+  { data_type => "boolean", default_value => 0, is_nullable => 1 },
   "destination",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "description",
+  { data_type => "text", is_nullable => 1 },
+  "track",
   { data_type => "text", is_nullable => 1 },
   "source",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
@@ -186,8 +225,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-18 17:42:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0as0tjC06E9lhYQdHOcWgA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2014-01-23 13:23:04
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:fxql9c/3ycbSzZ7JHCEjng
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

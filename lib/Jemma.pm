@@ -27,6 +27,7 @@ sub startup {
   $r->get('/ip/id/:id')       ->to(controller => 'ip',     action => 'id'   );
   $r->get('/ip/like/#match')  ->to(controller => 'ip',     action => 'match');
   $r->get('/ip/name/#name')   ->to(controller => 'ip',     action => 'name' );
+  $r->get('/ip/duplicate')    ->to(controller => 'ip',     action => 'duplicate' );
 
   $r->get('/group')           ->to(controller => 'group',  action => 'show' );
   $r->get('/group/name/#name')->to(controller => 'group',  action => 'name' );
@@ -37,16 +38,18 @@ sub startup {
   $r->get('/servicegrp')      ->to(controller => 'servicegrp', action => 'show' );
   $r->get('/servicegrp/name/#name')->to(controller => 'servicegrp', action => 'name');
 
-  $r->get('/fwrule')          ->to(controller => 'fwrule', action => 'show' );
-  $r->get('/route')           ->to(controller => 'route',  action => 'show' );
+  $r->get('/fwrule')          ->to(controller => 'fwrule',  action => 'show' );
+  $r->get('/natrule')         ->to(controller => 'natrule', action => 'show' );
+  $r->get('/route')           ->to(controller => 'route',   action => 'show' );
 
-  $r->post('/ip/search')      ->to(controller => 'ip',     action => 'search' );
-  $r->post('/group/search')   ->to(controller => 'group',  action => 'search' );
+  $r->post('/ip/search')      ->to(controller => 'ip',      action => 'search' );
+  $r->post('/group/search')   ->to(controller => 'group',   action => 'search' );
   $r->post('/service/search') ->to(controller => 'service', action => 'search');
 
-  $self->helper(n2ip => sub { Jemma::Utils::number_to_ip($_[1]) } );
-  $self->helper(r2c  => sub { Jemma::Utils::range_to_cidr($_[1], $_[2]) } );
-  $self->helper(commify => sub { Jemma::Utils::commify($_[1]) } );
+  $self->helper(n2ip    => sub { Jemma::Utils::number_to_ip($_[1])         } );
+  $self->helper(r2c     => sub { Jemma::Utils::range_to_cidr($_[1], $_[2]) } );
+  $self->helper(r2n     => sub { Jemma::Utils::range_to_netmask($_[1], $_[2]) } );
+  $self->helper(commify => sub { Jemma::Utils::commify($_[1])              } );
 }
 
 1;

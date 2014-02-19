@@ -99,6 +99,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 ipextras
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Ipextra>
+
+=cut
+
+__PACKAGE__->has_many(
+  "ipextras",
+  "Jemma::Schema::Result::Ipextra",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 ips
 
 Type: has_many
@@ -110,6 +125,21 @@ Related object: L<Jemma::Schema::Result::Ip>
 __PACKAGE__->has_many(
   "ips",
   "Jemma::Schema::Result::Ip",
+  { "foreign.source" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 natrules
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Natrule>
+
+=cut
+
+__PACKAGE__->has_many(
+  "natrules",
+  "Jemma::Schema::Result::Natrule",
   { "foreign.source" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -175,8 +205,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-18 17:42:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:b0hBZ143Wus14Fn+JOcgLA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2014-01-24 08:10:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/QPfA5GE2B7x4rqlAMDmvQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -15,10 +15,12 @@
       <div class="menu">
         <%= link_to "Sources"        => '/source'     %> <br />
         <%= link_to "IP's"           => '/ip'         %> <br />
-        <%= link_to "IP Group's"     => '/group'      %> <br />
+        <li><%= link_to "Groups"     => '/group'      %> <br /></li>
+        <li><%= link_to "Dupes"      => '/ip/duplicate' %> <br /></li>
         <%= link_to "Service's"      => '/service'    %> <br />
-        <%= link_to "Service Groups" => '/servicegrp' %> <br />
+        <li><%= link_to "Groups"     => '/servicegrp' %> <br /></li>
         <%= link_to "FW Rules"       => '/fwrule'     %> <br />
+        <%= link_to "NAT Rules"      => '/natrule'    %> <br />
         <%= link_to "Routes"         => '/route'      %> <br />
 	<hr />
 
