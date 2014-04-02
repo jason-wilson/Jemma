@@ -9,17 +9,17 @@ use Jemma::Schema;
 use Jemma;
 
 my ($schema) = Jemma->schema;
+my $name = shift;
 
 my $code = sub {
   for my $file (@ARGV) {
-    my ($source) = 'PIX';
-    my ($x) = Jemma::Import::CiscoPIX->new(name => $source);
+    my ($x) = Jemma::Import::CiscoPIX->new(name => $name);
 
     print "Importing $file\n";
 
     $x->importdata(
       $schema,
-      $source,
+      $name,
       $file,
     );
   }

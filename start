@@ -1,0 +1,1 @@
+MOJO_INACTIVITY_TIMEOUT=60 DBIC_TRACE=1 morbo script/jemma

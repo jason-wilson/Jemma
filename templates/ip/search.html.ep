@@ -2,6 +2,7 @@
 
 <table border="1">
   <tr>
+     <th>#</th>
      <th>Start</th>
      <th>End</th>
      <th>CIDR</th>
@@ -14,6 +15,7 @@
   % my $cnt = 0;
   % for my $line (@$ip) {
     <tr class="<%= ++$cnt % 2 ? "alt" : "normal" %>">
+      <td><%= $cnt %></td>
       <td><%= n2ip($line->start) %></td>
       <td><%= n2ip($line->end) %></td>
       <td>

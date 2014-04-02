@@ -32,7 +32,7 @@ sub importdata {
 
   $db{ip}{any}{id} = $schema->resultset('Ip')->create( {
     start       => 0,
-    end         => 256*256*256*256,
+    end         => 256*256*256*256-1,
     name        => 'any',
     description => 'any',
     source      => $source })->id;
@@ -56,6 +56,7 @@ sub importdata {
 	description => "$name",
 	source      => $source,
       });
+      $db{ip}{$ip}{id} = $id;
       $db{ip}{$name}{id} = $id;
       next;
     }
@@ -342,6 +343,7 @@ sub importdata {
 	$id = $db{service}{$svc}{id};
       }
 
+      #print "Loading $svc_id $type $id\n";
       $schema->resultset('Objectsetlist')->create( {
         objectset => $svc_id,
 	type	  => $type,
@@ -361,6 +363,53 @@ sub importdata {
 
       $rule_num++;
       #last if $rule_num > 10;
+
+    }
+
+    if (/^interface (.*)/) {
+      # Found an interface - remember for later
+      my $int = $1;
+      my ($desc, $name, $ip, $mask, $ip2) = ('undefined');
+      while (<$fh>) {
+        last if /^!/;
+	s/[\n\r]*$//;
+	$desc = $1 if /^ description (.*)/;
+	$name = $1 if /^ nameif (.*)/;
+	if (/^ ip address ([\d\.]+) ([\d\.]+) standby ([\d\.]+)/) {
+	  # Got an IP with a standby address
+	  $ip = $1;
+	  $mask = $2;
+	  $ip2 = $3;
+	}
+	$ip = $1, $mask=$2 if /^ ip address ([\d\.]+) ([\d\.]+)$/;
+      }
+      next unless defined $ip;
+      print "Loading $int with '$desc' and $name with $ip/$mask and $ip2/$mask\n";
+      $desc //= 'Interface ' . $int;
+
+      for my $i ($ip, $ip2) {
+        next unless defined $i;
+
+	my $ip_num = Jemma::Utils::ip_to_number($i);
+
+	$schema->resultset('Ip')->create( {
+	  start       => $ip_num,
+	  end         => $ip_num,
+	  name        => 'Interface ' . $int,
+	  description => $desc,
+	  source      => $source,
+	});
+      }
+
+      my $cidr = Net::CIDR::addrandmask2cidr($ip, $mask);
+      my ($start, $end) = Jemma::Utils::cidr_to_range($cidr);
+      $schema->resultset('Ip')->create( {
+	start       => $start,
+	end         => $end,
+	name        => 'Network for interface ' . $int,
+	description => $desc,
+	source      => $source,
+      });
 
     }
   }

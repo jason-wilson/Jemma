@@ -114,6 +114,7 @@ sub importdata {
       $num = $1;
       my ($name, $szone, $dzone, $src, $dst, $service, $action) = ($2, $3, $4, $5, $6, $7, $8);
       $db{rule}{$rule_num}{name} = $name;
+      $db{rule}{$rule_num}{description} = "$szone to $dzone";
       $db{rule}{$rule_num}{src}{$src}++;
       $db{rule}{$rule_num}{dst}{$dst}++;
       $db{rule}{$rule_num}{service}{$service}++;
@@ -125,6 +126,7 @@ sub importdata {
       $num = $1;
       my ($szone, $dzone, $src, $dst, $service, $action) = ($2, $3, $4, $5, $6, $7);
       $db{rule}{$rule_num}{name} = "Rule id $num";
+      $db{rule}{$rule_num}{description} = "$szone to $dzone";
       $db{rule}{$rule_num}{src}{$src}++;
       $db{rule}{$rule_num}{dst}{$dst}++;
       $db{rule}{$rule_num}{service}{$service}++;
@@ -135,6 +137,7 @@ sub importdata {
 
     if (defined $num) {
       $num = undef, $rule_num++, next if /^exit/;
+        
       $db{rule}{$rule_num}{disable}++,     next if /^set policy id (\d+) disable$/;
       $db{rule}{$rule_num}{src}{$1}++,     next if /^set src-address "([^"]*)"/;
       $db{rule}{$rule_num}{dst}{$1}++,     next if /^set dst-address "([^"]*)"/;
@@ -259,6 +262,8 @@ sub importdata {
       number      => $r,
       name        => $db{rule}{$r}{name},
       action      => $db{rule}{$r}{action},
+      description => $db{rule}{$r}{description},
+      enabled     => ! defined $db{rule}{$r}{disable},
       sourceset   => $src_id,
       destination => $dst_id,
       service     => $svc_id,

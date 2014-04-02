@@ -199,7 +199,7 @@ sub importdata {
     if (ref($h->{interfaces}) eq 'HASH') {
       for my $int (sort keys %{$h->{interfaces}}) {
 	my $name = $h->{interfaces}{$int}{officialname};
-	print $host, " has a $name interface\n";
+	#print $host, " has a $name interface\n";
 
 	my ($ip) = Jemma::Utils::ip_to_number($h->{interfaces}{$int}{ipaddr});
 	$schema->resultset('Ip')->create( {
@@ -348,11 +348,17 @@ sub importdata {
       $track = $rule->{track}{$t}{Name};
     }
 
+    my $desc = $rule->{comments};
+    if (defined $rule->{header_text}) {
+      $desc = "Section: " . $rule->{header_text};
+      print "Set description for $rule_num to be $desc\n";
+    }
+
     #And finally create the actual rule
     $schema->resultset('Fwrule')->create( {
       number      => $rule_num,
       name        => $rule->{name},
-      description => $rule->{comments},
+      description => $desc,
       enabled     => $rule->{disabled} ne 'true',
       action      => $action,
       srcnot      => $rule->{src}{op} eq 'not in',
@@ -371,8 +377,10 @@ sub importdata {
     my $nat_num = $1 + 0;
 
     my $nat = $d{'rule-base'}{$n};
+    #print "$n being processed: ", $nat->{AdminInfo}{chkpf_uid}, "\n";
+
     my $nattype = $nat->{src_adtr_translated}{adtr_method};
-    $nattype =~ s/adtr_method_//;
+    $nattype =~ s/adtr_method_// if defined $nattype;
 
     my $orig_src_id = $schema->resultset('Objectset')->create( {
       name => "orig_src: $nat_num", source => $source })->id;
@@ -448,11 +456,17 @@ sub importdata {
       });
     }
 
+    my $desc = $nat->{comments};
+    if (defined $nat->{header_text}) {
+      $desc = $nat->{header_text};
+      $nattype = 'HEADER';
+    }
+
     #And finally create the actual nat
     $schema->resultset('Natrule')->create( {
       number      => $nat_num,
       name        => $nat->{name},
-      description => $nat->{comments},
+      description => $desc,
       enabled     => $nat->{disabled} ne 'true',
       nattype     => $nattype,
       origsrcset  => $orig_src_id,
