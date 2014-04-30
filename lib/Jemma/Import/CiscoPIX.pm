@@ -23,6 +23,7 @@ sub importdata {
   my %db;
   my $num;
   my $rule_num = 1;
+  my $remark;
   my ($group, $svcgrp);
 
   $db{service}{any}{id} = $schema->resultset('Service')->create( {
@@ -46,14 +47,20 @@ sub importdata {
 
     if (/^name ([\d\.]+) (.*)/) {
       my ($ip, $name) = ($1, $2);
+      my $desc = $name;
 
-      $ip = Jemma::Utils::ip_to_number($ip);
+      if ($name =~ /(.*) description (.*)/) {
+        $name = $1;
+	$desc = $2;
+      }
+
+      my $ip_num = Jemma::Utils::ip_to_number($ip);
 
       my $id = $schema->resultset('Ip')->create( {
-	start       => $ip,
-	end         => $ip,
+	start       => $ip_num,
+	end         => $ip_num,
 	name        => $name,
-	description => "$name",
+	description => $desc,
 	source      => $source,
       });
       $db{ip}{$ip}{id} = $id;
@@ -181,7 +188,15 @@ sub importdata {
 
     }
 
-    print "$_\n" if /^access-list/;
+    # Remember remark if there is one
+    if (/^access-list \S+ remark (.*)/) {
+      if (defined $remark) {
+	$remark .= "\n" . $1;
+      } else {
+        $remark = $1;
+      }
+    }
+
     if (/^access-list (\S+) extended (\S+) (\S+) (.*)/) {
       # Got an ACL, with group name, action, protocol and rest of line
       my ($name, $action, $proto, $rest) = ($1, $2, $3, $4);
@@ -220,12 +235,19 @@ sub importdata {
 	$svc2 //= 'any';
       }
 
+      my $disabled = 0;
+      $disabled = 1 if / inactive$/;
+
+      $remark //= "Rule number $rule_num";
+
       print "Name($rule_num): $name\n";
       print "  Action : $action\n";
       print "  Proto  : $proto\n";
       print "  Source : $src and $src2\n";
       print "  Dest   : $dst and $dst2\n";
       print "  Service: $svc and $svc2\n";
+      print "  Remark : $remark\n";
+      print "  Disable: $disabled\n";
       print "\n";
 
       my $src_id = $schema->resultset('Objectset')->create( {
@@ -359,7 +381,10 @@ sub importdata {
 	destination => $dst_id,
 	service     => $svc_id,
 	source      => $source,
+	description => $remark,
+	enabled     => !$disabled,
       });
+      undef $remark;
 
       $rule_num++;
       #last if $rule_num > 10;
@@ -384,7 +409,7 @@ sub importdata {
 	$ip = $1, $mask=$2 if /^ ip address ([\d\.]+) ([\d\.]+)$/;
       }
       next unless defined $ip;
-      print "Loading $int with '$desc' and $name with $ip/$mask and $ip2/$mask\n";
+      #print "Loading $int with '$desc' and $name with $ip/$mask and $ip2/$mask\n";
       $desc //= 'Interface ' . $int;
 
       for my $i ($ip, $ip2) {

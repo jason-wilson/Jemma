@@ -43,7 +43,6 @@ sub importdata {
     while (<$fh>) {
       s/[\n\r]+$//;
 
-
       # Count how many tabs at start of line
       my ($idx) = s/\t//g;
       next unless $idx > 0;
@@ -162,7 +161,19 @@ sub importdata {
       });
       $d{_uid}{$h->{AdminInfo}{chkpf_uid}}{type} = 'ip';
       $d{_uid}{$h->{AdminInfo}{chkpf_uid}}{id} = $id->id;
+    } elsif (exists $h->{bogus_ip}) {
+      my $number = Jemma::Utils::ip_to_number($h->{bogus_ip});
+      my $id = $schema->resultset('Ip')->create( {
+	start       => $number,
+	end         => $number,
+	name        => $host,
+	description => "Bogus IP for " . $h->{comments},
+	source      => $source,
+      });
+      $d{_uid}{$h->{AdminInfo}{chkpf_uid}}{type} = 'ip';
+      $d{_uid}{$h->{AdminInfo}{chkpf_uid}}{id} = $id->id;
     }
+
 
     if (defined $d{_uid}{$h->{AdminInfo}{chkpf_uid}}{id}) {
       #
@@ -297,6 +308,7 @@ sub importdata {
     next unless $r =~ /^_rule (\d+)/;
 
     my $rule_num = $1 + 0;
+    print "Loading rule $rule_num\n";
 
     my $rule = $d{'rule-base'}{$r};
     my $action = $rule->{action}{accept}{type};
