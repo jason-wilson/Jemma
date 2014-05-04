@@ -23,10 +23,12 @@ sub startup {
   $r->get('/source')          ->to(controller => 'source', action => 'show' );
 
   $r->get('/source/:source/ip')->to(controller => 'ip',     action => 'show' );
+  $r->get('/source/:source/group')->to(controller => 'group', action => 'show' );
+
   $r->get('/ip')              ->to(controller => 'ip',     action => 'show' );
   $r->get('/ip/id/:id')       ->to(controller => 'ip',     action => 'id'   );
-  $r->get('/ip/like/#match')  ->to(controller => 'ip',     action => 'match');
-  $r->get('/ip/name/#name')   ->to(controller => 'ip',     action => 'name' );
+  $r->get('/ip/like/*match')  ->to(controller => 'ip',     action => 'match');
+  $r->get('/ip/name/*name')   ->to(controller => 'ip',     action => 'name' );
   $r->get('/ip/duplicate')    ->to(controller => 'ip',     action => 'duplicate' );
 
   $r->get('/group')           ->to(controller => 'group',  action => 'show' );
@@ -34,9 +36,9 @@ sub startup {
   $r->get('/grp/name/#name')  ->to(controller => 'group',  action => 'name' );
 
   $r->get('/service')         ->to(controller => 'service', action => 'show' );
-  $r->get('/service/name/#name')->to(controller => 'service', action => 'name');
+  $r->get('/service/name/*name')->to(controller => 'service', action => 'name');
   $r->get('/servicegrp')      ->to(controller => 'servicegrp', action => 'show' );
-  $r->get('/servicegrp/name/#name')->to(controller => 'servicegrp', action => 'name');
+  $r->get('/servicegrp/name/*name')->to(controller => 'servicegrp', action => 'name');
 
   $r->get('/fwrule')          ->to(controller => 'fwrule',  action => 'show' );
   $r->get('/natrule')         ->to(controller => 'natrule', action => 'show' );

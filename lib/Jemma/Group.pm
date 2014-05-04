@@ -6,9 +6,15 @@ sub show {
   my $self = shift;
   my $schema = Jemma->schema;
 
+  my $source = $self->param('source');
+  my @search;
+  push @search, 'source.name', $source if defined $source;
+
   my @group;
   for my $line ($schema->resultset('Grp')->search(
-    { },
+    {
+      @search,
+    },
     {
       prefetch => 'source',
       order_by => 'me.name',

@@ -102,6 +102,36 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 servicegrpservicegrp_children
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Servicegrpservicegrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "servicegrpservicegrp_children",
+  "Jemma::Schema::Result::Servicegrpservicegrp",
+  { "foreign.child" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 servicegrpservicegrp_parents
+
+Type: has_many
+
+Related object: L<Jemma::Schema::Result::Servicegrpservicegrp>
+
+=cut
+
+__PACKAGE__->has_many(
+  "servicegrpservicegrp_parents",
+  "Jemma::Schema::Result::Servicegrpservicegrp",
+  { "foreign.parent" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 source
 
 Type: belongs_to
@@ -118,8 +148,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-18 17:42:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:c32wCXGBSW9RuEYvNBJGZw
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2014-05-04 15:55:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qmgTlHycQk7c/0vcvo0AlA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

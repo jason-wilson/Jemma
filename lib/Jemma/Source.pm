@@ -80,6 +80,20 @@ sub show {
   }
   $self->stash(fwrules => \@fwrules );
 
+  my @natrules;
+  for my $nat ($schema->resultset('Natrule')->search(
+      {
+      },
+      {
+	select => [ 'source', { count => 'source', -as => 'howmany' } ],
+	group_by => 'source',
+	order_by => 'source',
+      },
+    )) {
+    $natrules[$nat->source->id] = $nat->get_column('howmany');
+  }
+  $self->stash(natrules => \@natrules );
+
 }
 
 1;

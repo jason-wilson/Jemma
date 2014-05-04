@@ -12,6 +12,7 @@
      <th>Services</th>
      <th>Service Groups</th>
      <th>FW Rules</th>
+     <th>NAT Rules</th>
   </tr>
 
   % for my $line (@$sources) {
@@ -19,12 +20,16 @@
       <td align=right><%= $line->id %></td>
       <td><%= $line->name %></td>
       <td><%= $line->loaded %></td>
-      <td align=right><%= commify(@$ips[$line->id])      %></td>
-      <td align=right><%= commify(@$groups[$line->id])   %></td>
+      <td align=right>
+        <%= link_to commify(@$ips[$line->id]) => '/source/' . $line->name . '/ip' %></td>
+      <td align=right>
+        <%= link_to commify(@$groups[$line->id]) => '/source/' . $line->name . '/group' %></td>
       <td align=right><%= commify(@$services[$line->id]) %></td>
       <td align=right><%= commify(@$svcgrps[$line->id]) %></td>
       <td align=right>
         <%= link_to commify(@$fwrules[$line->id]) => '/fwrule?source=' . $line->name  %></td>
+      <td align=right>
+        <%= link_to commify(@$natrules[$line->id]) => '/natrule?source=' . $line->name  %></td>
     </tr>
   % }
 

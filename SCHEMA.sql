@@ -85,6 +85,15 @@ CREATE TABLE "servicegrpgrp" (
   FOREIGN KEY ("service")  REFERENCES "service"("id") ON DELETE CASCADE
 );
 
+DROP TABLE "servicegrpservicegrp";
+CREATE TABLE "servicegrpservicegrp" (
+  "id"          INTEGER PRIMARY KEY NOT NULL,
+  "parent"      INTEGER NOT NULL,
+  "child"       INTEGER NOT NULL,
+  FOREIGN KEY ("parent") REFERENCES "servicegrp"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("child")  REFERENCES "servicegrp"("id") ON DELETE CASCADE
+);
+
 DROP TABLE "objectset";
 CREATE TABLE "objectset" (
   "id"          INTEGER PRIMARY KEY NOT NULL,
