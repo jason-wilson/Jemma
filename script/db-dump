@@ -2,7 +2,7 @@ use lib 'lib';
 
 use Jemma::Schema;
 
-my $schema = Jemma::Schema->connect('dbi:SQLite:data.sqlite');
+my $schema = new Jemma::Schema->connect('dbi:SQLite:data.sqlite');
 print "Schema is $schema\n";
 
 my ($data) = $schema->resultset('Source')->all;
