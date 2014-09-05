@@ -5,7 +5,7 @@ use Jemma::Schema;
 sub show {
   my $self = shift;
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(service => [
     $schema->resultset('Service')->search(
@@ -21,7 +21,7 @@ sub name {
   my $self = shift;
   my $name = $self->param('name');
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(service => [
     $schema->resultset('Service')->search(
@@ -70,7 +70,7 @@ sub search {
   my $self = shift;
   my $name = $self->param('service');
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(service => [
     $schema->resultset('Service')->search(

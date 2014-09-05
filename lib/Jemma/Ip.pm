@@ -5,7 +5,7 @@ use Jemma::Schema;
 sub show {
   my $self = shift;
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   my $source = $self->param('source');
   my @search;
@@ -44,7 +44,7 @@ sub match {
   my $self = shift;
   my $expr = $self->param('match');
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   my @ip;
   for my $line ($schema->resultset('Ip')->search(
@@ -65,7 +65,7 @@ sub match {
 sub duplicate {
   my $self = shift;
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
   my %d;
 
   my @ip;
@@ -91,7 +91,7 @@ sub name {
   my $self = shift;
   my $name = $self->param('name');
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(ip => [
     $schema->resultset('Ip')->search(
@@ -124,7 +124,7 @@ sub search {
   my $self = shift;
   my $ip = $self->param('ip');
   
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   if ($ip =~ /^[\d\.]+$/) {
     my $number = Jemma::Utils::ip_to_number($ip);
@@ -192,7 +192,7 @@ sub id {
   my $self = shift;
   my $id = $self->param('id');
   
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(ip => $schema->resultset('Ip')->search( { id => $id } ));
 

@@ -5,7 +5,7 @@ use Jemma::Schema;
 sub show {
   my $self = shift;
 
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   $self->stash(route => [
     $schema->resultset('Route')->all ]);

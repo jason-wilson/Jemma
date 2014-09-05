@@ -4,7 +4,7 @@ use Jemma::Schema;
 
 sub show {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   my $source = $self->param('source');
   my @search;
@@ -28,7 +28,7 @@ sub show {
 
 sub name {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
   my $name = $self->stash('name');
 
   my @ip;
@@ -77,7 +77,7 @@ sub name {
 
 sub search {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
   my $group = $self->param('group');
 
   if ($group =~ /[_%]/) {

@@ -4,7 +4,7 @@ use Jemma::Schema;
 
 sub show {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
 
   my @svcgrp;
   for my $line ($schema->resultset('Servicegrp')->search(
@@ -22,7 +22,7 @@ sub show {
 
 sub name {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
   my $name = $self->stash('name');
 
   my @svc;
@@ -42,7 +42,7 @@ sub name {
 
 sub search {
   my $self = shift;
-  my $schema = Jemma->schema;
+  my $schema = new Jemma->schema;
   my $group = $self->param('group');
 
   if ($group =~ /[_%]/) {
