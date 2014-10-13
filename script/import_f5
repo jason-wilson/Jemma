@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib 'lib';
+
+use Data::Dumper;
+use Jemma::Import::F5;
+use Jemma::Schema;
+use Jemma::Utils;
+use Jemma;
+
+my $schema = new Jemma->schema;
+
+my $code = sub {
+  for my $file (@ARGV) {
+    my ($source) = 'F5';
+    my ($x) = Jemma::Import::F5->new(name => $source);
+
+    $x->importdata(
+      $file,
+    );
+  }
+};
+$schema->txn_do($code);
