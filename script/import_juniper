@@ -8,7 +8,7 @@ use Jemma::Import::Juniper;
 use Jemma::Schema;
 use Jemma;
 
-my ($schema) = Jemma->schema;
+my ($schema) = new Jemma->schema;
 
 my $code = sub {
   for my $file (@ARGV) {

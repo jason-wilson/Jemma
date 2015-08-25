@@ -11,7 +11,7 @@ use Jemma;
 
 my ($source) = 'Innerguard';
 my ($x) = Jemma::Import::McAfee->new(name => $source);
-my ($schema) = Jemma->schema;
+my ($schema) = new Jemma->schema;
 
 my $code = sub {
   $x->importdata($schema, $source, @ARGV);
